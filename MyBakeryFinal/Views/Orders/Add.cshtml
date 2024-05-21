@@ -1,0 +1,129 @@
+﻿@using MyBakeryFinal.ViewModels.Orders
+@model AddVM
+@{
+}
+
+<h2> Add Order</h2>
+
+<form action="/Orders/Add" method="post">
+	<div>
+		<div class="grid">
+			<div class="row mb-2">
+				<div class="col-2">
+					@Html.LabelFor(m => m.Details)
+				</div>
+				<div class="col-2">
+					@Html.TextBoxFor(m => m.Details)
+				</div>
+				<div class="col-2">
+					@Html.ValidationMessageFor(m => m.Details)
+				</div>
+			</div>
+
+
+		</div>
+
+		<div class="row mb-2">
+			<div class="col-2">
+				@Html.LabelFor(m => m.Tip)
+			</div>
+			<div class="col-2">
+				@Html.TextBoxFor(m => m.Tip, new { type = "number" })
+			</div>
+			<div class="col-2">
+				@Html.ValidationMessageFor(m => m.Tip)
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col-2">
+				@Html.LabelFor(m => m.isExpress)
+			</div>
+			<div class="col-2">
+				@Html.CheckBoxFor(m => m.isExpress)
+			</div>
+			<div class="col-2">
+				@Html.ValidationMessageFor(m => m.isExpress)
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col-2">
+				@Html.LabelFor(m => m.Customer_ID)
+			</div>
+			<div class="col-2">
+				<select id="Customer_ID" name="Customer_ID">
+					@foreach (var customer in Model.Customers)
+					{
+						<option value="@customer.Id">@customer.FirstName @customer.LastName</option>
+					}
+				</select>
+
+
+			</div>
+			<div class="col-2">
+				@Html.ValidationMessageFor(m => m.isExpress)
+
+			</div>
+		</div>
+		<div class="row mb-2">
+	
+
+			@if (Model.Recipes.Count > 0)
+			{
+				<div class="row mb-2">
+					<div class="col-2">
+						@Html.LabelFor(m => m.Recipe1ID)
+					</div>
+					<div class="col-2">
+						<select id="Recipe1ID" name="Recipe1ID">
+							@foreach (var recipe in Model.Recipes)
+							{
+								<option value="@recipe.Id">@recipe.Name</option>
+							}
+						</select>
+
+
+					</div>
+
+				</div>
+
+			}
+
+			@if (Model.Recipes.Count > 1)
+			{
+				<div class="row mb-2">
+					<div class="col-2">
+						@Html.LabelFor(m => m.Recipe2ID)
+					</div>
+					<div class="col-2">
+						<select id="Recipe2ID" name="Recipe2ID">
+							@foreach (var recipe in Model.Recipes)
+							{
+								<option value="@recipe.Id">@recipe.Name</option>
+							}
+						</select>
+
+
+					</div>
+
+				</div>
+			}
+
+
+
+
+			<div class="row mb-2">
+				<div class="col-3">
+					@Html.ValidationMessage("summaryError")
+				</div>
+			</div>
+
+			<div class="row mb-2">
+				<div class="col-2"></div>
+				<div class="col-2">
+					<input type="submit" class="right" value="Save" />
+					<a href="/Orders/Index" class="right">Back</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</form> 

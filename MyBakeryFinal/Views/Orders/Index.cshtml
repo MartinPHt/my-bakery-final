@@ -1,0 +1,74 @@
+﻿@model MyBakeryFinal.ViewModels.Orders.IndexVM
+@{
+}
+
+<h2>Orders</h2>
+
+ 
+<table class="table">
+
+    <tr>
+        <th>
+            Customer
+        </th>
+        <th>
+            Details
+        </th>
+        <th>
+            Tip
+        </th>
+        <th>
+            Express delivery
+        </th>
+        <th>Recipes</th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Orders)
+    {
+        <tr>
+            <td>
+                @item.Customer.FirstName @item.Customer.LastName
+            </td>
+            <td>
+                @item.Details
+            </td>
+            <td>
+                @item.Tip
+            </td>
+
+            @if(item.isExpress) {
+                <td>Yes</td>
+            } else
+            {
+                <td>No</td>
+            }
+
+            <td>
+                @if (Model.OrderToRecipes.ContainsKey(item.Id))
+                {
+                    foreach(var recipe in Model.OrderToRecipes[item.Id])
+                    {
+                        <span>@recipe</span><br />
+      
+                    }
+                            
+                }
+            </td>
+
+            <td>
+                <a href="/Orders/Edit?id=@item.Id" class="text-primary">Edit</a>
+            </td>
+
+            <td>
+                <a href="/Orders/Delete?id=@item.Id" class="text-danger" method="delete" onclick="return confirm('Delete Order?');">Delete</a>
+            </td>
+        </tr>
+    }
+
+    </table>
+
+<div class="d-flex justify-center">
+    <a href="/Orders/Add" class="btn-success p-3 py-1">Add +</a>
+</div>

@@ -1,0 +1,67 @@
+html {
+    font-size: 14px;
+}
+
+body {
+    background: #c2c9d1;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+#navbar {
+    background: #17202a;
+    padding-block: 0.5rem;
+}
+
+    #navbar a {
+        color: #fff;
+    }
+
+    #navbar .navbar-nav {
+        flex-direction: row-reverse;
+        margin-right: 30px;
+        gap: 4px;
+    }
+
+table {
+    border: 1px solid #000 !important;
+}
+
+    table tr:nth-child(odd) {
+        background: #808b96;
+        color: #fff;
+    }
+
+    table tr:first-child {
+        background: #2c3e50;
+        color: #fff;
+    }
+
+    table tr:nth-child(even ) {
+        background: #fad7a0;
+    }
+
+        table tr:nth-child(even) a[href*="Edit"] {
+            color: #005e8c !important;
+        }
+
+    table tr:nth-child(odd) a[href*="Edit"] {
+        color: orange !important;
+    }
+
+    .bakery-image-holder img{
+        border-radius: 15px;
+    }

@@ -1,0 +1,74 @@
+﻿@model MyBakeryFinal.ViewModels.Recipes.IndexVM
+@{
+}
+
+<h2>Recipes</h2>
+
+
+<table class="table">
+
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Associated baker
+        </th>
+        <th>
+            Orders count
+        </th>
+        <th>
+
+        </th>
+        <th>
+
+        </th>
+  
+        
+    </tr>
+
+    @foreach (var item in Model.Recipes)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Description
+            </td>
+            <td>
+                @item.Price
+            </td>
+
+           <td>
+                @item.Baker.FirstName  @item.Baker.LastName
+           </td>
+
+            @if (@Model.RecipesToCount.ContainsKey(item.Id))
+            {
+                <td>
+                    @Model.RecipesToCount[item.Id]
+                </td>
+            }
+
+            <td>
+                <a href="/Recipes/Edit?id=@item.Id" class="text-primary">Edit</a>
+            </td>
+           <td>
+                <a href="/Recipes/Delete?id=@item.Id"  class="text-danger" method="delete" onclick="return confirm('Delete Recipe?');">Delete</a>
+           </td>
+          
+        </tr>
+    }
+
+</table>
+
+<div class="d-flex justify-center">
+    <a href="/Recipes/Add" class="btn-success p-3 py-1">Add +</a>
+</div>

@@ -1,0 +1,49 @@
+﻿@model MyBakeryFinal.ViewModels.Bakers.EditVM
+@{
+}
+
+<h2> Edit Baker</h2>
+
+<form action="/Bakers/Edit" method="post">
+    <div>
+        <div class="grid">
+            @Html.HiddenFor(m => m.Baker.Id)
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Baker.FirstName)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Baker.FirstName)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Baker.FirstName)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Baker.LastName)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Baker.LastName)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Baker.LastName)
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-3">
+                    @Html.ValidationMessage("summaryError")
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-1"></div>
+                <div class="col-2">
+                    <input type="submit" class="right" value="Save" />
+                    <a href="/Bakers/Index" class="right">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form> 

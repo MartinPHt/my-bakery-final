@@ -1,0 +1,77 @@
+﻿@model MyBakeryFinal.ViewModels.Recipes.EditVM
+@{
+}
+
+<h2> Edit Recipe</h2>
+
+<form action="/Recipes/Edit" method="post">
+	<div>
+		@Html.HiddenFor(m => m.Recipe.Id)
+		<div class="grid">
+			<div class="row mb-2">
+				<div class="col-1">
+					@Html.LabelFor(m => m.Recipe.Name)
+				</div>
+				<div class="col-2">
+					@Html.TextBoxFor(m => m.Recipe.Name)
+				</div>
+				<div class="col-2">
+					@Html.ValidationMessageFor(m => m.Recipe.Name)
+				</div>
+			</div>
+			<div class="row mb-2">
+				<div class="col-1">
+					@Html.LabelFor(m => m.Recipe.Price)
+				</div>
+				<div class="col-2">
+					@Html.TextBoxFor(m => m.Recipe.Price, new { type = "number" })
+				</div>
+				<div class="col-2">
+					@Html.ValidationMessageFor(m => m.Recipe.Price)
+				</div>
+			</div>
+
+			<div class="row mb-2">
+				<div class="col-1">
+					@Html.LabelFor(m => m.Recipe.Description)
+				</div>
+				<div class="col-2">
+					@Html.TextAreaFor(m => m.Recipe.Description)
+				</div>
+				<div class="col-2">
+					@Html.ValidationMessageFor(m => m.Recipe.Description)
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-1">
+					<label>Baker: </label>
+				</div>
+				<div class="col-2">
+					<select id="Baker_ID" name="Baker_ID">
+						@foreach (var baker in Model.Bakers)
+						{
+							<option value="@baker.Id">@baker.FirstName @baker.LastName</option>
+						}
+					</select>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="row mb-2">
+			<div class="col-3">
+				@Html.ValidationMessage("summaryError")
+			</div>
+		</div>
+
+		<div class="row mb-2">
+			<div class="col-1"></div>
+			<div class="col-2">
+				<input type="submit" class="right" value="Save" />
+				<a href="/Recipes/Index" class="right">Back</a>
+			</div>
+		</div>
+	</div>
+</form> 

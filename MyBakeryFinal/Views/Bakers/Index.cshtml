@@ -1,0 +1,54 @@
+﻿@model MyBakeryFinal.ViewModels.Bakers.IndexVM
+@{
+}
+
+<h2>Bakers</h2>
+
+<table class="table">
+
+    <tr>
+        <th>
+            First name
+        </th>
+        <th>
+            Last name
+        </th>
+        
+        <th>
+            Total recipes
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Bakers)
+    {
+        <tr>
+            <td>
+                @item.FirstName
+            </td>
+            <td>
+                @item.LastName
+            </td>
+           
+            <td>
+                @item.TotalRecipes
+            </td>
+
+            <td>
+                <a href="/Bakers/Edit?id=@item.Id" class="text-primary">Edit</a>
+            </td>
+
+            <td>
+                <a href="/Bakers/Delete?id=@item.Id" class="text-danger" method="delete" onclick="return confirm('Delete Baker?');">Delete</a>
+            </td>
+           
+        </tr>
+    }
+
+</table>
+
+
+<div class="d-flex justify-center">
+    <a href="/Bakers/Add" class="btn-success p-3 py-1">Add +</a>
+</div>
