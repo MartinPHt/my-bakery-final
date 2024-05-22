@@ -1,4 +1,4 @@
-﻿using MyBakeryFinal.Entities;
+﻿using Common.Entities;
 using System.ComponentModel;
 
 namespace MyBakeryFinal.ViewModels.Orders
@@ -9,8 +9,6 @@ namespace MyBakeryFinal.ViewModels.Orders
 
 		public int Customer_ID { get; set; }
 		public List<Customer> Customers { get; set; }
-
-		public List<Recipe> Recipes { get; set; }
 
 		[DisplayName("Recipe 1")]
 		public int Recipe1ID { get; set; }

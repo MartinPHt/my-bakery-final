@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.CommConstants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MyBakeryFinal.Entities;
+using Common.Entities;
 using MyBakeryFinal.Models;
-using MyBakeryFinal.Repositories;
+using MyBakeryFinal.Services;
 using MyBakeryFinal.ViewModels.Customers;
 using System.Diagnostics;
 
@@ -18,14 +19,42 @@ namespace MyBakeryFinal.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IndexVM vm = new IndexVM();
+            try
+            {
+                var response = await ManageCustomersService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
 
-            var allCustomers = new List<Customer>(); //TODO: get from back end
+                if (response == null)
+                    return BadRequest("Couldn't load customers. Responce message from the server is null");
 
-            vm.Customers = allCustomers;
-            return View(vm);
+                IndexVM vm = new IndexVM();
+                var allCustomers = new List<Customer>();
+
+                foreach (var customerResponse in response)
+                {
+                    var customer = new Customer();
+                    customer.Name = customerResponse.Name;
+                    customer.Address = customerResponse.Address;
+                    customer.AccountBalance = customerResponse.AccountBalance;
+                    customer.DeluxeAccount = customerResponse.DeluxeAccount;
+                    customer.RegisteredOn = customerResponse.RegisteredOn;
+                    allCustomers.Add(customer);
+                }
+
+                vm.Customers = allCustomers;
+                return View(vm);
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
@@ -36,16 +65,27 @@ namespace MyBakeryFinal.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(AddVM addVM)
+        public async Task<IActionResult> Add(AddVM addVM)
         {
-            Customer item = new Customer();
-            item.FirstName = addVM.FirstName;
-            item.LastName = addVM.LastName;
-            item.Address = addVM.Address;
+            try
+            {
+                var response = await ManageCustomersService.Instance.SendRequest<CustomerResponse>(new CreateCustomerRequest(addVM.Name, addVM.Address, addVM.AccountBalance, addVM.DeluxeAccount, DateTime.Now));
 
-            //TODO: Update using api customersRepo.Save(item);
+                if (response == null)
+                    return BadRequest("Couldn't add customer. Responce message from the server is null");    
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]

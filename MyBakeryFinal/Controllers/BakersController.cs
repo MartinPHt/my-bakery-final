@@ -2,8 +2,6 @@ using MyBakeryFinal.Models;
 using MyBakeryFinal.ViewModels.Bakers;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using MyBakeryFinal.Entities;
-using MyBakeryFinal.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -22,26 +20,17 @@ namespace MyBakeryFinal.Controllers
         public IActionResult Index()
         {
             IndexVM vm = new IndexVM();
-            BakersRepository bakersRepo = new BakersRepository();
-            RecipesRepository recipesRepo = new RecipesRepository();
-            List<Baker> allBakers = bakersRepo.GetAll(i => true);
-            List<Recipe> allRecipes = recipesRepo.GetAll(i => true);
+            //BakersRepository bakersRepo = new BakersRepository();
+            //RecipesRepository recipesRepo = new RecipesRepository();
+            //List<Baker> allBakers = bakersRepo.GetAll(i => true);
 
-            foreach (var baker in allBakers)
-            {
-                int currentCount = 0;
-                foreach (var recipe in allRecipes)
-                {
-                    if (recipe.Baker_ID == baker.Id)
-                    {
-                        currentCount++;
-                    }
-                }
+            //foreach (var baker in allBakers)
+            //{
+            //    int currentCount = 0;
+            //    baker.TotalRecipes = currentCount;
+            //}
 
-                baker.TotalRecipes = currentCount;
-            }
-
-            vm.Bakers = allBakers;
+            //vm.Bakers = allBakers;
 
 
 
@@ -58,13 +47,13 @@ namespace MyBakeryFinal.Controllers
         public IActionResult Add(AddVM addVM)
         {
 
-            BakersRepository bakersRepo = new BakersRepository();
+            //BakersRepository bakersRepo = new BakersRepository();
 
-            Baker item = new Baker();
-            item.FirstName = addVM.FirstName;
-            item.LastName = addVM.LastName;
+            //Baker item = new Baker();
+            //item.FirstName = addVM.FirstName;
+            //item.LastName = addVM.LastName;
 
-            bakersRepo.Save(item);
+            //bakersRepo.Save(item);
 
 
             return RedirectToAction("Index");
@@ -73,11 +62,11 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public IActionResult Edit(int id)
         {
-            BakersRepository repo = new BakersRepository();
-            Baker baker = repo.GetAll(baker => baker.Id == id).Find(i => i.Id == id);
+            //BakersRepository repo = new BakersRepository();
+            //Baker baker = repo.GetAll(baker => baker.Id == id).Find(i => i.Id == id);
 
             EditVM vm = new EditVM();
-            vm.Baker = baker;
+            //vm.Baker = baker;
 
             return View(vm);
 
@@ -87,9 +76,9 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public IActionResult Edit(EditVM vm)
         {
-            BakersRepository repo = new BakersRepository();
+            //BakersRepository repo = new BakersRepository();
 
-            repo.Save(vm.Baker);
+            //repo.Save(vm.Baker);
 
             return RedirectToAction("Index");
 
@@ -99,12 +88,12 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public IActionResult Delete(int id)
         {
-            BakersRepository repo = new BakersRepository();
+            //BakersRepository repo = new BakersRepository();
 
-            Baker baker = new Baker();
-            baker.Id = id;
+            //Baker baker = new Baker();
+            //baker.Id = id;
 
-            repo.Delete(baker);
+            //repo.Delete(baker);
 
             return RedirectToAction("Index");
         }

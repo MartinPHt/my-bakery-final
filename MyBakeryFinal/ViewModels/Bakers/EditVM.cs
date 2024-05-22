@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
-using MyBakeryFinal.Entities;
+using Common.Entities;
 
 namespace MyBakeryFinal.ViewModels.Bakers
 {

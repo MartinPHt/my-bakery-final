@@ -1,4 +1,4 @@
-﻿using MyBakeryFinal.Entities;
+﻿using Common.Entities;
 namespace MyBakeryFinal.ViewModels.Customers
 {
     public class IndexVM

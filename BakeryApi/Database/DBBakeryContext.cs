@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BakeryApi.Entities;
+using Common.Entities;
 
 namespace BakeryApi.Database
 {
     public class DBBakeryContext: DbContext
     {
      
-        //public DbSet<Baker> Bakers { get; set; }
+        public DbSet<Baker> Bakers { get; set; }
         //public DbSet<Recipe> Recipes { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
 
-        //public DbSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         //public DbSet<RecipesToOrders> RecipesToOrders { get; set; }
   

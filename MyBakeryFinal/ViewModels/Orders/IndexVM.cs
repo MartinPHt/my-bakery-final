@@ -1,4 +1,5 @@
-﻿using MyBakeryFinal.Entities;
+﻿using Common.Entities;
+
 namespace MyBakeryFinal.ViewModels.Orders
 {
     public class IndexVM

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BakeryApi.Entities;
+using Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

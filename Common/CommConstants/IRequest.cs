@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Common.CommConstants
 {
@@ -10,7 +11,12 @@ namespace Common.CommConstants
 
     public abstract class DataRequest : IRequest
     {
-        public abstract string EndpointName { get; }
+        protected DataRequest(string endpointName)
+        {
+            EndpointName = endpointName;
+        }
+
+        public string EndpointName { get; }
 
         public bool HasData 
         { 
@@ -20,7 +26,12 @@ namespace Common.CommConstants
 
     public abstract class NoDataRequest : IRequest
     {
-        public abstract string EndpointName { get; }
+        protected NoDataRequest(string endpointName)
+        {
+            EndpointName = endpointName;
+        }
+
+        public string EndpointName { get; }
 
         public bool HasData
         {

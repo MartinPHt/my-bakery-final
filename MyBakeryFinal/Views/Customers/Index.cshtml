@@ -7,43 +7,56 @@
 <table class="table">
 
     <tr>
-        <th>
+        <th style="text-align: center">
             First name
         </th>
-        <th>
-            Last name
-        </th>
-        <th>
+        <th style="text-align: center">
             Address
         </th>
-        <th>
+        <th style="text-align: center">
+            Account Balance
+        </th>
+        <th style="text-align: center">
+            Deluxe Account
+        </th>
+        <th style="text-align: center">
             Total orders
         </th>
-        <th></th>
-        <th></th>
+        <th style="text-align: center">
+            Date Of Registration
+        </th>
+        <th style="text-align: center" colspan="2">
+            Actions
+        </th>
     </tr>
 
     @foreach (var item in Model.Customers)
     {
         <tr>
-            <td>
-                @item.FirstName
+            <td style="text-align: center">
+                @item.Name
             </td>
-            <td>
-                @item.LastName
-            </td>
-            <td>
+            <td style="text-align: center">
                 @item.Address
             </td>
-            <td>
+            <td style="text-align: center">
+                @item.AccountBalance
+            </td>
+            <td style="text-align: center">
+                @item.DeluxeAccount
+            </td>
+            <td style="text-align: center">
                 @item.TotalOrders
             </td>
+            <td style="text-align: center">
+                @item.RegisteredOn
+            </td>
 
-            <td>
+            <td style="text-align: center">
                 <a href="/Customers/Edit?id=@item.Id" class="text-primary">Edit</a>
             </td>
 
-            <td>
+            <td style="text-align: center">
                 <a href="/Customers/Delete?id=@item.Id" class="text-danger" method="delete" onclick="return confirm('Delete Customer?');">Delete</a>
             </td>
         </tr>

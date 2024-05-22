@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BakeryApi.Entities
+namespace Common.Entities
 {
     public class Baker: BaseEntity
     {

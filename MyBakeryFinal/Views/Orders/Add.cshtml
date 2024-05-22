@@ -53,7 +53,7 @@
 				<select id="Customer_ID" name="Customer_ID">
 					@foreach (var customer in Model.Customers)
 					{
-						<option value="@customer.Id">@customer.FirstName @customer.LastName</option>
+						<option value="@customer.Id">@customer.Name</option>
 					}
 				</select>
 
@@ -67,7 +67,7 @@
 		<div class="row mb-2">
 	
 
-			@if (Model.Recipes.Count > 0)
+			@* @if (Model.Recipes.Count > 0)
 			{
 				<div class="row mb-2">
 					<div class="col-2">
@@ -86,9 +86,9 @@
 
 				</div>
 
-			}
+			} *@
 
-			@if (Model.Recipes.Count > 1)
+			@* @if (Model.Recipes.Count > 1)
 			{
 				<div class="row mb-2">
 					<div class="col-2">
@@ -106,7 +106,7 @@
 					</div>
 
 				</div>
-			}
+			} *@
 
 
 

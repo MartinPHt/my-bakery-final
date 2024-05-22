@@ -1,8 +1,7 @@
-﻿using MyBakeryFinal.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyBakeryFinal.Entities
+namespace Common.Entities
 {
     public class Order : BaseEntity
     {

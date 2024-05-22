@@ -10,27 +10,15 @@
         <div class="grid">
             <div class="row mb-2">
                 <div class="col-1">
-                    @Html.LabelFor(m => m.FirstName)
+                    @Html.LabelFor(m => m.Name)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.FirstName)
+                    @Html.TextBoxFor(m => m.Name)
                 </div>
                 <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.FirstName)
+                    @Html.ValidationMessageFor(m => m.Name)
                 </div>
             </div>
-            <div class="row mb-2">
-                <div class="col-1">
-                    @Html.LabelFor(m => m.LastName)
-                </div>
-                <div class="col-2">
-                    @Html.TextBoxFor(m => m.LastName)
-                </div>
-                <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.LastName)
-                </div>
-            </div>
-
             <div class="row mb-2">
                 <div class="col-1">
                     @Html.LabelFor(m => m.Address)
@@ -40,6 +28,30 @@
                 </div>
                 <div class="col-2">
                     @Html.ValidationMessageFor(m => m.Address)
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.AccountBalance)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.AccountBalance)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.AccountBalance)
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.DeluxeAccount)
+                </div>
+                <div class="col-2">
+                    @Html.CheckBoxFor(m => m.DeluxeAccount)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.DeluxeAccount)
                 </div>
             </div>
 
