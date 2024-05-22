@@ -6,6 +6,7 @@ using MyBakeryFinal.Models;
 using MyBakeryFinal.Services;
 using MyBakeryFinal.ViewModels.Customers;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace MyBakeryFinal.Controllers
 {
@@ -34,6 +35,7 @@ namespace MyBakeryFinal.Controllers
                 foreach (var customerResponse in response)
                 {
                     var customer = new Customer();
+                    customer.Id = customerResponse.Id;
                     customer.Name = customerResponse.Name;
                     customer.Address = customerResponse.Address;
                     customer.AccountBalance = customerResponse.AccountBalance;
@@ -89,34 +91,72 @@ namespace MyBakeryFinal.Controllers
         }
 
         [Authorize]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            //TODO: Get customer from api;
-            Customer customer = new Customer();
+            var response = await ManageCustomersService.Instance.SendRequest<CustomerResponse>(new GetCustomerRequest(id));
+
+            Customer customer = new Customer()
+            {
+                Id = response.Id,
+                Name = response.Name,
+                Address = response.Address,
+                AccountBalance = response.AccountBalance,
+                DeluxeAccount = response.DeluxeAccount,
+                RegisteredOn = response.RegisteredOn
+            };
             EditVM vm = new EditVM();
             vm.Customer = customer;
 
             return View(vm);
-
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Edit(EditVM vm)
+        public async Task<IActionResult> Edit(EditVM vm)
         {
-            //TODO: Save the customer using the api repo.Save(vm.Customer);
-            return RedirectToAction("Index");
+            try
+            {
+                var response = await ManageCustomersService.Instance.SendRequest<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.Name, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
+
+                if (response == null)
+                    return BadRequest("Couldn't edit customer. Responce message from the server is null");
+
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            Customer customer = new Customer();
-            customer.Id = id;
+            try
+            {
+                var response = await ManageCustomersService.Instance.SendRequest<OkResult>(new DeleteCustomerRequest(id));
 
-            // Use the api to delete: repo.Delete(customer);
+                if (response == null)
+                    return BadRequest("Couldn't edit customer. Responce message from the server is null");
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -35,6 +35,8 @@ namespace Common.CommConstants
     #region Customers Request
     public class CustomerResponse
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
         public string Address { get; set; }

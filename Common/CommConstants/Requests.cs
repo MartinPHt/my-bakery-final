@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Entities;
+using System;
 
 namespace Common.CommConstants
 {
@@ -38,10 +39,10 @@ namespace Common.CommConstants
         { }
     }
 
-    public class EditCustomerRequest : DataRequest
+    public class UpdateCustomerRequest : DataRequest
     {
-        public EditCustomerRequest(int id, string name, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn)
-            : base(Endpoints.CreateCustomerEndPoint)
+        public UpdateCustomerRequest(int id ,string name, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn)
+            : base(Endpoints.UpdateCustomerEndPoint)
         {
             Id = id;
             Name = name;
@@ -61,7 +62,7 @@ namespace Common.CommConstants
     public class DeleteCustomerRequest : DataRequest
     {
         public DeleteCustomerRequest(int id)
-            : base(Endpoints.GetCustomerEndPoint)
+            : base(Endpoints.DeleteCustomerEndPoint)
         {
             Id = id;
         }

@@ -31,8 +31,7 @@ namespace MyBakeryFinal.Services
             HttpResponseMessage httpResponse = await HttpClient.PostAsync(request.EndpointName, requestContent);
             httpResponse.EnsureSuccessStatusCode();
             string responseBody = await httpResponse.Content.ReadAsStringAsync();
-            var temp = JsonSerializer.Deserialize<T>(responseBody, serializerOptions);
-            return temp;
+            return JsonSerializer.Deserialize<T>(responseBody, serializerOptions);
         }
     }
 }

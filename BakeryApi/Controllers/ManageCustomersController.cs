@@ -13,7 +13,7 @@ namespace BakeryApi.Controllers
     {
         public ManageCustomersController()
         {
-            
+
         }
 
         // Create/Edit
@@ -28,26 +28,33 @@ namespace BakeryApi.Controllers
                 customersRepo.Save(customer);
 
                 //generate response
-                var response = new CustomerResponse();
-                response.Name = customer.Name;
-                response.Address = customer.Address;
-                response.AccountBalance = customer.AccountBalance;
-                response.DeluxeAccount = customer.DeluxeAccount;
-                response.RegisteredOn = customer.RegisteredOn;
-
+                var response = GenerateResponse(customer);
                 return new JsonResult(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
             }
         }
 
         [HttpPost(Endpoints.GetCustomerEndPoint)]
-        public JsonResult Get(int id)
+        public IActionResult Get(GetCustomerRequest request)
         {
-            //TODO
-            return new JsonResult(Ok());
+            try
+            {
+                //Retrieve from database
+                CustomersRepository repo = new CustomersRepository();
+                Customer customer = repo.GetAll(n => n.Id == request.Id).Find(i => i.Id == request.Id);
+
+                //generate response
+                var response = GenerateResponse(customer);
+
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
         }
 
         [HttpPost(Endpoints.GetAllCustomerEndPoint)]
@@ -74,38 +81,79 @@ namespace BakeryApi.Controllers
                     customer.TotalOrders = currentCount;
                 }
 
-                List<CustomerResponse> response = new List<CustomerResponse>();
-                foreach (var item in allCustomers)
+                var response = allCustomers.Select(customer => new CustomerResponse()
                 {
-                    var customerResponse = new CustomerResponse();
-                    customerResponse.Name = item.Name;
-                    customerResponse.Address = item.Address;
-                    customerResponse.AccountBalance = item.AccountBalance;
-                    customerResponse.DeluxeAccount = item.DeluxeAccount;
-                    customerResponse.RegisteredOn = item.RegisteredOn;
-                    response.Add(customerResponse);
-                }
+                    Id = customer.Id,
+                    Name = customer.Name,
+                    Address = customer.Address,
+                    AccountBalance = customer.AccountBalance,
+                    DeluxeAccount = customer.DeluxeAccount,
+                    RegisteredOn =customer.RegisteredOn,
+                }).ToList();
 
                 return new JsonResult(response);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
             }
         }
 
         [HttpPost(Endpoints.UpdateCustomerEndPoint)]
-        public JsonResult Update(Customer customer)
+        public IActionResult Update(UpdateCustomerRequest request)
         {
-            //TODO
-            return new JsonResult(Ok());
+            try
+            {
+                CustomersRepository repo = new CustomersRepository();
+                var customer = new Customer()
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    Address = request.Address,
+                    AccountBalance = request.AccountBalance,
+                    DeluxeAccount = request.DeluxeAccount,
+                    RegisteredOn = request.RegisteredOn
+                };
+                repo.Save(customer);
+
+                return new JsonResult(Ok());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
         }
 
         [HttpPost(Endpoints.DeleteCustomerEndPoint)]
-        public JsonResult Delete(Customer customer)
+        public IActionResult Delete(DeleteCustomerRequest request)
         {
-            //TODO
-            return new JsonResult(Ok());
+            try
+            {
+                CustomersRepository repo = new CustomersRepository();
+
+                Customer customer = new Customer();
+                customer.Id = request.Id;
+
+                repo.Delete(customer);
+                return new JsonResult(Ok());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
+        }
+
+        private CustomerResponse GenerateResponse(Customer customer)
+        {
+            var response = new CustomerResponse();
+            response.Id = customer.Id;
+            response.Name = customer.Name;
+            response.Address = customer.Address;
+            response.AccountBalance = customer.AccountBalance;
+            response.DeluxeAccount = customer.DeluxeAccount;
+            response.RegisteredOn = customer.RegisteredOn;
+
+            return response;
         }
     }
 }
