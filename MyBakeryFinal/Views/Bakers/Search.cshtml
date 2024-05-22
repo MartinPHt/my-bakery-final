@@ -16,10 +16,11 @@
         .search-container button {
             height: 34px;
             margin-left: 5px;
+            margin-right: 5px;
         }
 </style>
 
-@model MyBakeryFinal.ViewModels.Bakers.IndexVM
+@model MyBakeryFinal.ViewModels.Bakers.SearchVM
 @{
 }
 
@@ -29,6 +30,7 @@
     <form id="searchForm" action="/Bakers/Search" method="post" onsubmit="return validateSearchForm()">
         <input type="text" id="firstName" placeholder="Search.." name="firstName">
         <button type="submit" class="btn btn-success p-3 py-1">Search</button>
+        <a href="/Bakers/Index" class="btn btn-danger p-3 py-1">Reset</a>
     </form>
 </div>
 

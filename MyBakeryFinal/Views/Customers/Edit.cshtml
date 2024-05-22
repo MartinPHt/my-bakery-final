@@ -14,7 +14,7 @@
                     @Html.LabelFor(m => m.Customer.FirstName)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Customer.FirstName)
+                    @Html.TextBoxFor(m => m.Customer.FirstName, new { @maxlength = "50" })
                 </div>
                 <div class="col-2">
                     @Html.ValidationMessageFor(m => m.Customer.FirstName)
@@ -25,7 +25,7 @@
                     @Html.LabelFor(m => m.Customer.LastName)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Customer.LastName)
+                    @Html.TextBoxFor(m => m.Customer.LastName, new { @maxlength = "50" })
                 </div>
                 <div class="col-2">
                     @Html.ValidationMessageFor(m => m.Customer.LastName)
@@ -36,7 +36,7 @@
                     @Html.LabelFor(m => m.Customer.Address)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Customer.Address)
+                    @Html.TextBoxFor(m => m.Customer.Address, new { @maxlength = "100" })
                 </div>
                 <div class="col-2">
                     @Html.ValidationMessageFor(m => m.Customer.Address)

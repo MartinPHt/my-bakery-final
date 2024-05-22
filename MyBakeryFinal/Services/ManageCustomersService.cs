@@ -1,10 +1,4 @@
-﻿using Common.CommConstants;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
-
-namespace MyBakeryFinal.Services
+﻿namespace MyBakeryFinal.Services
 {
     public class ManageCustomersService : BaseService
     {

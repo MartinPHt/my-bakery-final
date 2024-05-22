@@ -13,5 +13,21 @@ namespace MyBakeryFinal.ViewModels.Bakers
         [DisplayName("Last name: ")]
         [Required(ErrorMessage = "This field is Required!")]
         public string LastName { get; set; }
+
+        [DisplayName("Email Address: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public string EmailAddress { get; set; }
+
+        [DisplayName("Salary: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public double Salary { get; set; }
+
+        [DisplayName("Full-Time: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public bool IsFullTime { get; set; }
+
+        [Display(Name = "Registered on")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public DateTime RegisteredOn { get; set; }
     }
 }

@@ -44,6 +44,6 @@ namespace Common.Entities
         [Required]
         public DateTime RegisteredOn { get; set; }
 
-        public int TotalOrders;
+        public int TotalOrders { get; set; }
     }
 }

@@ -1,7 +1,4 @@
-﻿using Common.Entities;
-using System;
-
-namespace Common.CommConstants
+﻿namespace Common.CommConstants
 {
     #region Customers Request
     public class CreateCustomerRequest : DataRequest
@@ -37,7 +34,7 @@ namespace Common.CommConstants
     public class GetAllCustomerRequest : NoDataRequest
     {
         public GetAllCustomerRequest()
-            : base(Endpoints.GetAllCustomerEndPoint)
+            : base(Endpoints.GetAllCustomersEndPoint)
         { }
     }
 
@@ -77,6 +74,87 @@ namespace Common.CommConstants
     {
         public SearchCustomersByFirstNameRequest(string firstName)
             : base(Endpoints.SearchCustomersByFirstNameEndPoint)
+        {
+            FirstName = firstName;
+        }
+        public string FirstName { get; }
+    }
+    #endregion
+
+    #region Baker Request
+    public class CreateBakerRequest : DataRequest
+    {
+        public CreateBakerRequest(string firstName, string lastName, string emailAddress, double salary, bool isFullTime, DateTime registeredOn)
+            : base(Endpoints.CreateBakerEndPoint)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            Salary = salary;
+            IsFullTime = isFullTime;
+            RegisteredOn = registeredOn;
+        }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string EmailAddress { get; }
+        public double Salary { get; }
+        public bool IsFullTime { get; }
+        public DateTime RegisteredOn { get; }
+    }
+
+    public class GetBakerRequest : DataRequest
+    {
+        public GetBakerRequest(int id)
+            : base(Endpoints.GetBakerEndPoint)
+        {
+            Id = id;
+        }
+        public int Id { get; }
+    }
+
+    public class GetAllBakerRequest : NoDataRequest
+    {
+        public GetAllBakerRequest()
+            : base(Endpoints.GetAllBakersEndPoint)
+        { }
+    }
+
+    public class UpdateBakerRequest : DataRequest
+    {
+        public UpdateBakerRequest(int id, string firstName, string lastName, string emailAddress, double salary, bool isFullTime, DateTime registeredOn)
+            : base(Endpoints.UpdateBakerEndPoint)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
+            Salary = salary;
+            IsFullTime = isFullTime;
+            RegisteredOn = registeredOn;
+        }
+        public int Id { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string EmailAddress { get; }
+        public double Salary { get; }
+        public bool IsFullTime { get; }
+        public DateTime RegisteredOn { get; }
+    }
+
+    public class DeleteBakerRequest : DataRequest
+    {
+        public DeleteBakerRequest(int id)
+            : base(Endpoints.DeleteBakerEndPoint)
+        {
+            Id = id;
+        }
+        public int Id { get; }
+    }
+
+    public class SearchBakersByFirstNameRequest : DataRequest
+    {
+        public SearchBakersByFirstNameRequest(string firstName)
+            : base(Endpoints.SearchBakersByFirstNameEndPoint)
         {
             FirstName = firstName;
         }

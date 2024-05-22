@@ -36,9 +36,21 @@ namespace Common.CommConstants
         public DateTime RegisteredOn { get; set; }
     }
 
-    public class SearchCustomersResponse
+    public class BakerResponse
     {
-        public List<CustomerResponse> Response { get; set; }
+        public int Id { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string EmailAddress { get; set; }
+
+        public double Salary { get; set; }
+
+        public bool IsFullTime { get; set; }
+
+        public DateTime RegisteredOn { get; set; }
     }
     #endregion
 }

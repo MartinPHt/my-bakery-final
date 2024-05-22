@@ -57,7 +57,7 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetAllCustomerEndPoint)]
+        [HttpPost(Endpoints.GetAllCustomersEndPoint)]
         public IActionResult GetAll()
         {
             try

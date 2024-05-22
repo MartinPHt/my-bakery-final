@@ -3,6 +3,9 @@ using MyBakeryFinal.ViewModels.Bakers;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Common.CommConstants;
+using Common.Entities;
+using MyBakeryFinal.Services;
 
 
 namespace MyBakeryFinal.Controllers
@@ -17,26 +20,43 @@ namespace MyBakeryFinal.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IndexVM vm = new IndexVM();
-            //BakersRepository bakersRepo = new BakersRepository();
-            //RecipesRepository recipesRepo = new RecipesRepository();
-            //List<Baker> allBakers = bakersRepo.GetAll(i => true);
+            try
+            {
+                var response = await ManageBakersService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
 
-            //foreach (var baker in allBakers)
-            //{
-            //    int currentCount = 0;
-            //    baker.TotalRecipes = currentCount;
-            //}
+                if (response == null)
+                    return BadRequest("Couldn't load bakers. Responce message from the server is null");
 
-            //vm.Bakers = allBakers;
+                IndexVM vm = new IndexVM();
+                var allBakers = response.Select(bakerResponse => new Baker()
+                {
+                    Id = bakerResponse.Id,
+                    FirstName = bakerResponse.FirstName,
+                    LastName = bakerResponse.LastName,
+                    EmailAddress = bakerResponse.EmailAddress,
+                    Salary = bakerResponse.Salary,
+                    IsFullTime = bakerResponse.IsFullTime,
+                    RegisteredOn = bakerResponse.RegisteredOn,
+                }).ToList();
 
-
-
-            return View(vm);
+                vm.Bakers = allBakers;
+                return View(vm);
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
+        [Authorize]
         public IActionResult Add()
         {
             return View();
@@ -44,58 +64,136 @@ namespace MyBakeryFinal.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(AddVM addVM)
+        public async Task<IActionResult> Add(AddVM addVM)
         {
+            try
+            {
+                var response = await ManageBakersService.Instance.SendRequest<BakerResponse>(new CreateBakerRequest(addVM.FirstName, addVM.LastName, addVM.EmailAddress, addVM.Salary, addVM.IsFullTime, DateTime.Now));
 
-            //BakersRepository bakersRepo = new BakersRepository();
+                if (response == null)
+                    return BadRequest("Couldn't add baker. Responce message from the server is null");    
 
-            //Baker item = new Baker();
-            //item.FirstName = addVM.FirstName;
-            //item.LastName = addVM.LastName;
-
-            //bakersRepo.Save(item);
-
-
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            //BakersRepository repo = new BakersRepository();
-            //Baker baker = repo.GetAll(baker => baker.Id == id).Find(i => i.Id == id);
+            var response = await ManageBakersService.Instance.SendRequest<BakerResponse>(new GetBakerRequest(id));
 
+            Baker baker = new Baker()
+            {
+                Id = response.Id,
+                FirstName = response.FirstName,
+                LastName = response.LastName,
+                EmailAddress = response.EmailAddress,
+                Salary = response.Salary,
+                IsFullTime = response.IsFullTime,
+                RegisteredOn = response.RegisteredOn
+            };
             EditVM vm = new EditVM();
-            //vm.Baker = baker;
+            vm.Baker = baker;
 
             return View(vm);
-
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Edit(EditVM vm)
+        public async Task<IActionResult> Edit(EditVM vm)
         {
-            //BakersRepository repo = new BakersRepository();
+            try
+            {
+                var response = await ManageBakersService.Instance.SendRequest<OkResult>(new UpdateBakerRequest(vm.Baker.Id, vm.Baker.FirstName, vm.Baker.LastName, vm.Baker.EmailAddress, vm.Baker.Salary, vm.Baker.IsFullTime, vm.Baker.RegisteredOn));
 
-            //repo.Save(vm.Baker);
+                if (response == null)
+                    return BadRequest("Couldn't edit baker. Responce message from the server is null");
 
-            return RedirectToAction("Index");
-
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
 
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            //BakersRepository repo = new BakersRepository();
+            try
+            {
+                var response = await ManageBakersService.Instance.SendRequest<OkResult>(new DeleteBakerRequest(id));
 
-            //Baker baker = new Baker();
-            //baker.Id = id;
+                if (response == null)
+                    return BadRequest("Couldn't edit baker. Responce message from the server is null");
 
-            //repo.Delete(baker);
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
+        }
 
-            return RedirectToAction("Index");
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Search(string firstName)
+        {
+            try
+            {
+                var responseList = await ManageBakersService.Instance.SendRequest<List<BakerResponse>>(new SearchBakersByFirstNameRequest(firstName));
+
+                if (responseList == null)
+                    return BadRequest("Couldn't add Baker. Responce message from the server is null");
+
+                SearchVM vm = new SearchVM();
+                var BakersList = responseList.Select(response => new Baker()
+                {
+                    Id = response.Id,
+                    FirstName = response.FirstName,
+                    LastName = response.LastName,
+                    EmailAddress = response.EmailAddress,
+                    Salary = response.Salary,
+                    IsFullTime = response.IsFullTime,
+                    RegisteredOn = response.RegisteredOn,
+                }).ToList();
+
+                vm.Bakers = BakersList;
+                return View(vm);
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         public IActionResult Privacy()
