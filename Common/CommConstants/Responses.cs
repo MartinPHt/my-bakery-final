@@ -16,20 +16,6 @@ namespace Common.CommConstants
         }
         public bool Successfull { get; }
     }
-
-    public class ResponseOK : Response
-    {
-        public ResponseOK() :base(true)
-        {
-        }
-    }
-
-    public class ResponseBad : Response
-    {
-        public ResponseBad() :base(false)
-        {
-        }
-    }
     #endregion
 
     #region Customers Request
@@ -37,7 +23,9 @@ namespace Common.CommConstants
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
 
         public string Address { get; set; }
 
@@ -46,6 +34,11 @@ namespace Common.CommConstants
         public bool DeluxeAccount { get; set; }
 
         public DateTime RegisteredOn { get; set; }
+    }
+
+    public class SearchCustomersResponse
+    {
+        public List<CustomerResponse> Response { get; set; }
     }
     #endregion
 }

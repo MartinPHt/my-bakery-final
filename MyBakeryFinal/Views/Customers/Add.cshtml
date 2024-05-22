@@ -5,18 +5,29 @@
 
 <h2> Add Customer</h2>
 
-<form action="/Customers/Add" method="post">
+<form id="addCustomerForm" action="/Customers/Add" method="post">
     <div>
         <div class="grid">
             <div class="row mb-2">
                 <div class="col-1">
-                    @Html.LabelFor(m => m.Name)
+                    @Html.LabelFor(m => m.FirstName)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Name)
+                    @Html.TextBoxFor(m => m.FirstName, new { @maxlength = "50" })
                 </div>
                 <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Name)
+                    @Html.ValidationMessageFor(m => m.FirstName)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.LastName)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.LastName, new { @maxlength = "50" })
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.LastName)
                 </div>
             </div>
             <div class="row mb-2">
@@ -24,7 +35,7 @@
                     @Html.LabelFor(m => m.Address)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Address)
+                    @Html.TextBoxFor(m => m.Address, new { @maxlength = "100" })
                 </div>
                 <div class="col-2">
                     @Html.ValidationMessageFor(m => m.Address)
@@ -65,9 +76,62 @@
                 <div class="col-1"></div>
                 <div class="col-2">
                     <input type="submit" class="right" value="Save" />
-                    <a href="/Customers/Index" class="right">Back</a>
+                    <a href="/Customers/Index" class="right">Cancel</a>
                 </div>
             </div>
         </div>
     </div>
-</form> 
+</form>
+
+<script>
+    document.getElementById('addCustomerForm').addEventListener('submit', function (event) {
+        let isValid = true;
+
+        const firstName = document.querySelector('input[name="FirstName"]');
+        const lastName = document.querySelector('input[name="LastName"]');
+        const address = document.querySelector('input[name="Address"]');
+        const accountBalance = document.querySelector('input[name="AccountBalance"]');
+
+        if (!firstName.value.trim()) {
+            isValid = false;
+            alert('First Name is required.');
+            firstName.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!lastName.value.trim()) {
+            isValid = false;
+            alert('Last Name is required.');
+            lastName.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!address.value.trim()) {
+            isValid = false;
+            alert('Address is required.');
+            address.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!accountBalance.value.trim()) {
+            isValid = false;
+            alert('Account Balance is required.');
+            accountBalance.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (isNaN(accountBalance.value) || !accountBalance.value.match(/^\d+(\.\d+)?$/)) {
+            isValid = false;
+            alert('Account Balance must be a valid number.');
+            accountBalance.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        return isValid;
+    });
+</script>

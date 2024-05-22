@@ -53,7 +53,7 @@
 				<select id="Customer_ID" name="Customer_ID">
 					@foreach (var customer in Model.Customers)
 					{
-						<option value="@customer.Id">@customer.Name</option>
+						<option value="@customer.Id">@customer.FirstName</option>
 					}
 				</select>
 

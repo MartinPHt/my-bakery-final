@@ -24,7 +24,7 @@ namespace BakeryApi.Controllers
             {
                 //Save to database
                 CustomersRepository customersRepo = new CustomersRepository();
-                Customer customer = new Customer(request.Name, request.Address, request.AccountBalance, request.DeluxeAccount, request.RegisteredOn);
+                Customer customer = new Customer(request.FirstName, request.LastName, request.Address, request.AccountBalance, request.DeluxeAccount, request.RegisteredOn);
                 customersRepo.Save(customer);
 
                 //generate response
@@ -84,7 +84,8 @@ namespace BakeryApi.Controllers
                 var response = allCustomers.Select(customer => new CustomerResponse()
                 {
                     Id = customer.Id,
-                    Name = customer.Name,
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
                     Address = customer.Address,
                     AccountBalance = customer.AccountBalance,
                     DeluxeAccount = customer.DeluxeAccount,
@@ -108,7 +109,8 @@ namespace BakeryApi.Controllers
                 var customer = new Customer()
                 {
                     Id = request.Id,
-                    Name = request.Name,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
                     Address = request.Address,
                     AccountBalance = request.AccountBalance,
                     DeluxeAccount = request.DeluxeAccount,
@@ -143,11 +145,39 @@ namespace BakeryApi.Controllers
             }
         }
 
+        [HttpPost(Endpoints.SearchCustomersByFirstNameEndPoint)]
+        public IActionResult Srearch(SearchCustomersByFirstNameRequest request)
+        {
+            try
+            {
+                CustomersRepository repo = new CustomersRepository();
+                List<Customer> customersSearchResult = repo.GetAll(n => n.FirstName == request.FirstName);
+
+                var response = customersSearchResult.Select(customer => new CustomerResponse()
+                {
+                    Id = customer.Id,
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    Address = customer.Address,
+                    AccountBalance = customer.AccountBalance,
+                    DeluxeAccount = customer.DeluxeAccount,
+                    RegisteredOn = customer.RegisteredOn,
+                }).ToList();
+
+                return new JsonResult(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
+        }
+
         private CustomerResponse GenerateResponse(Customer customer)
         {
             var response = new CustomerResponse();
             response.Id = customer.Id;
-            response.Name = customer.Name;
+            response.FirstName = customer.FirstName;
+            response.LastName = customer.LastName;
             response.Address = customer.Address;
             response.AccountBalance = customer.AccountBalance;
             response.DeluxeAccount = customer.DeluxeAccount;

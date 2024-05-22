@@ -4,19 +4,31 @@
 
 <h2> Edit Customer</h2>
 
-<form action="/Customers/Edit" method="post">
+<form id="editCustomerForm" action="/Customers/Edit" method="post">
     <div>
         <div class="grid">
             @Html.HiddenFor(m => m.Customer.Id)
+            @Html.HiddenFor(m => m.Customer.RegisteredOn)
             <div class="row mb-2">
                 <div class="col-1">
-                    @Html.LabelFor(m => m.Customer.Name)
+                    @Html.LabelFor(m => m.Customer.FirstName)
                 </div>
                 <div class="col-2">
-                    @Html.TextBoxFor(m => m.Customer.Name)
+                    @Html.TextBoxFor(m => m.Customer.FirstName)
                 </div>
                 <div class="col-2">
-                    @Html.ValidationMessageFor(m => m.Customer.Name)
+                    @Html.ValidationMessageFor(m => m.Customer.FirstName)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-1">
+                    @Html.LabelFor(m => m.Customer.LastName)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Customer.LastName)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Customer.LastName)
                 </div>
             </div>
             <div class="row mb-2">
@@ -70,4 +82,57 @@
             </div>
         </div>
     </div>
-</form> 
+</form>
+
+<script>
+    document.getElementById('editCustomerForm').addEventListener('submit', function (event) {
+        let isValid = true;
+
+        const firstName = document.querySelector('input[name="FirstName"]');
+        const lastName = document.querySelector('input[name="LastName"]');
+        const address = document.querySelector('input[name="Address"]');
+        const accountBalance = document.querySelector('input[name="AccountBalance"]');
+
+        if (!firstName.value.trim()) {
+            isValid = false;
+            alert('First Name is required.');
+            firstName.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!lastName.value.trim()) {
+            isValid = false;
+            alert('Last Name is required.');
+            lastName.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!address.value.trim()) {
+            isValid = false;
+            alert('Address is required.');
+            address.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (!accountBalance.value.trim()) {
+            isValid = false;
+            alert('Account Balance is required.');
+            accountBalance.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        if (isNaN(accountBalance.value) || !accountBalance.value.match(/^\d+(\.\d+)?$/)) {
+            isValid = false;
+            alert('Account Balance must be a valid number.');
+            accountBalance.focus();
+            event.preventDefault();
+            return false;
+        }
+
+        return isValid;
+    });
+</script>

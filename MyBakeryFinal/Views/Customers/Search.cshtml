@@ -4,22 +4,23 @@
         margin-top: 15px;
     }
 
-    .search-container input[type="text"],
-    .search-container button {
-        vertical-align: middle;
-    }
+        .search-container input[type="text"],
+        .search-container button {
+            vertical-align: middle;
+        }
 
-    .search-container input[type="text"] {
-        height: 34px;
-    }
+        .search-container input[type="text"] {
+            height: 34px;
+        }
 
-    .search-container button {
-        height: 34px;
-        margin-left: 5px;
-    }
+        .search-container button {
+            height: 34px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
 </style>
 
-@model MyBakeryFinal.ViewModels.Customers.IndexVM
+@model MyBakeryFinal.ViewModels.Customers.SearchVM
 @{
 }
 
@@ -29,6 +30,7 @@
     <form id="searchForm" action="/Customers/Search" method="post" onsubmit="return validateSearchForm()">
         <input type="text" id="firstName" placeholder="Search.." name="firstName">
         <button type="submit" class="btn btn-success p-3 py-1">Search</button>
+        <a href="/Customers/Index" class="btn btn-danger p-3 py-1">Reset</a>
     </form>
 </div>
 

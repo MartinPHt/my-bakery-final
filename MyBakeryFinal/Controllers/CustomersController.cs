@@ -36,7 +36,8 @@ namespace MyBakeryFinal.Controllers
                 {
                     var customer = new Customer();
                     customer.Id = customerResponse.Id;
-                    customer.Name = customerResponse.Name;
+                    customer.FirstName = customerResponse.FirstName;
+                    customer.LastName = customerResponse.LastName;
                     customer.Address = customerResponse.Address;
                     customer.AccountBalance = customerResponse.AccountBalance;
                     customer.DeluxeAccount = customerResponse.DeluxeAccount;
@@ -71,7 +72,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await ManageCustomersService.Instance.SendRequest<CustomerResponse>(new CreateCustomerRequest(addVM.Name, addVM.Address, addVM.AccountBalance, addVM.DeluxeAccount, DateTime.Now));
+                var response = await ManageCustomersService.Instance.SendRequest<CustomerResponse>(new CreateCustomerRequest(addVM.FirstName, addVM.LastName, addVM.Address, addVM.AccountBalance, addVM.DeluxeAccount, DateTime.Now));
 
                 if (response == null)
                     return BadRequest("Couldn't add customer. Responce message from the server is null");    
@@ -98,7 +99,8 @@ namespace MyBakeryFinal.Controllers
             Customer customer = new Customer()
             {
                 Id = response.Id,
-                Name = response.Name,
+                FirstName = response.FirstName,
+                LastName = response.LastName,
                 Address = response.Address,
                 AccountBalance = response.AccountBalance,
                 DeluxeAccount = response.DeluxeAccount,
@@ -116,7 +118,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await ManageCustomersService.Instance.SendRequest<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.Name, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
+                var response = await ManageCustomersService.Instance.SendRequest<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.FirstName, vm.Customer.LastName, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
 
                 if (response == null)
                     return BadRequest("Couldn't edit customer. Responce message from the server is null");
@@ -146,6 +148,44 @@ namespace MyBakeryFinal.Controllers
                     return BadRequest("Couldn't edit customer. Responce message from the server is null");
 
                 return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Search(string firstName)
+        {
+            try
+            {
+                var responseList = await ManageCustomersService.Instance.SendRequest<List<CustomerResponse>>(new SearchCustomersByFirstNameRequest(firstName));
+
+                if (responseList == null)
+                    return BadRequest("Couldn't add customer. Responce message from the server is null");
+
+                SearchVM vm = new SearchVM();
+                var customersList = responseList.Select(response => new Customer()
+                {
+                    Id = response.Id,
+                    FirstName = response.FirstName,
+                    LastName = response.LastName,
+                    Address = response.Address,
+                    AccountBalance = response.AccountBalance,
+                    DeluxeAccount = response.DeluxeAccount,
+                    RegisteredOn = response.RegisteredOn,
+                }).ToList();
+
+                vm.Customers = customersList;
+                return View(vm);
             }
             catch (HttpRequestException httpRequestException)
             {

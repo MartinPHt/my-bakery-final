@@ -5,9 +5,13 @@ namespace MyBakeryFinal.ViewModels.Customers
 {
     public class AddVM
     {
-        [DisplayName("Name: ")]
+        [DisplayName("First Name: ")]
         [Required(ErrorMessage = "This field is Required!")]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        [DisplayName("Last Name: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public string LastName { get; set; }
 
         [DisplayName("Address: ")]
         [Required(ErrorMessage = "This field is Required!")]

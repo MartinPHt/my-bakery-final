@@ -6,16 +6,18 @@ namespace Common.CommConstants
     #region Customers Request
     public class CreateCustomerRequest : DataRequest
     {
-        public CreateCustomerRequest(string name, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn) 
+        public CreateCustomerRequest(string firstName, string lastName, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn) 
             : base(Endpoints.CreateCustomerEndPoint)
         {
-            Name = name;
+            FirstName = firstName;
+            LastName = lastName;
             Address = address;
             AccountBalance = accountBalance;
             DeluxeAccount = deluxeAccount;
             RegisteredOn = registeredOn;
         }
-        public string Name { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
         public string Address { get; }
         public double AccountBalance { get; }
         public bool DeluxeAccount { get; }
@@ -41,18 +43,20 @@ namespace Common.CommConstants
 
     public class UpdateCustomerRequest : DataRequest
     {
-        public UpdateCustomerRequest(int id ,string name, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn)
+        public UpdateCustomerRequest(int id ,string firstName, string lastName, string address, double accountBalance, bool deluxeAccount, DateTime registeredOn)
             : base(Endpoints.UpdateCustomerEndPoint)
         {
             Id = id;
-            Name = name;
+            FirstName = firstName;
+            LastName = lastName;
             Address = address;
             AccountBalance = accountBalance;
             DeluxeAccount = deluxeAccount;
             RegisteredOn = registeredOn;
         }
         public int Id { get; }
-        public string Name { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
         public string Address { get; }
         public double AccountBalance { get; }
         public bool DeluxeAccount { get; }
@@ -67,6 +71,16 @@ namespace Common.CommConstants
             Id = id;
         }
         public int Id { get; }
+    }
+
+    public class SearchCustomersByFirstNameRequest : DataRequest
+    {
+        public SearchCustomersByFirstNameRequest(string firstName)
+            : base(Endpoints.SearchCustomersByFirstNameEndPoint)
+        {
+            FirstName = firstName;
+        }
+        public string FirstName { get; }
     }
     #endregion
 }

@@ -8,6 +8,7 @@
         public const string GetAllCustomerEndPoint = "getallcustomer";
         public const string UpdateCustomerEndPoint = "updatecustomer";
         public const string DeleteCustomerEndPoint = "deletecustomer";
+        public const string SearchCustomersByFirstNameEndPoint = "searchcustomer";
         #endregion
     }
 }
