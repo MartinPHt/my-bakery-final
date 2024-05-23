@@ -36,6 +36,7 @@ namespace Common.CommConstants
         public bool DeluxeAccount { get; set; }
 
         public DateTime RegisteredOn { get; set; }
+        public int TotalOrders { get; set; }
     }
 
     public class BakerResponse
@@ -53,6 +54,7 @@ namespace Common.CommConstants
         public bool IsFullTime { get; set; }
 
         public DateTime RegisteredOn { get; set; }
+        public int TotalOrders { get; set; }
     }
 
     public class OrderResponse

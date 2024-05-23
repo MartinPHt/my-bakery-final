@@ -78,16 +78,7 @@ namespace BakeryApi.Controllers
                     baker.TotalOrders = currentCount;
                 }
 
-                var response = allBakers.Select(baker => new BakerResponse()
-                {
-                    Id = baker.Id,
-                    FirstName = baker.FirstName,
-                    LastName = baker.LastName,
-                    EmailAddress = baker.EmailAddress,
-                    Salary = baker.Salary,
-                    IsFullTime = baker.IsFullTime,
-                    RegisteredOn = baker.RegisteredOn,
-                }).ToList();
+                var response = allBakers.Select(baker => GenerateResponse(baker)).ToList();
 
                 return new JsonResult(response);
             }
@@ -148,18 +139,9 @@ namespace BakeryApi.Controllers
             try
             {
                 BakersRepository repo = new BakersRepository();
-                List<Baker> bakersSearchResult = repo.GetAll(n => n.FirstName == request.FirstName);
+                List<Baker> bakersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(request.FirstName.ToUpper()));
 
-                var response = bakersSearchResult.Select(baker => new BakerResponse()
-                {
-                    Id = baker.Id,
-                    FirstName = baker.FirstName,
-                    LastName = baker.LastName,
-                    EmailAddress = baker.EmailAddress,
-                    Salary = baker.Salary,
-                    IsFullTime = baker.IsFullTime,
-                    RegisteredOn = baker.RegisteredOn,
-                }).ToList();
+                var response = bakersSearchResult.Select(baker => GenerateResponse(baker)).ToList();
 
                 return new JsonResult(response);
             }
@@ -179,6 +161,7 @@ namespace BakeryApi.Controllers
             response.Salary = baker.Salary;
             response.IsFullTime = baker.IsFullTime;
             response.RegisteredOn = baker.RegisteredOn;
+            response.TotalOrders = baker.TotalOrders;
 
             return response;
         }

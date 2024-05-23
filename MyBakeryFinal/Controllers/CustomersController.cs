@@ -42,6 +42,7 @@ namespace MyBakeryFinal.Controllers
                     customer.AccountBalance = customerResponse.AccountBalance;
                     customer.DeluxeAccount = customerResponse.DeluxeAccount;
                     customer.RegisteredOn = customerResponse.RegisteredOn;
+                    customer.TotalOrders = customerResponse.TotalOrders;
                     allCustomers.Add(customer);
                 }
 

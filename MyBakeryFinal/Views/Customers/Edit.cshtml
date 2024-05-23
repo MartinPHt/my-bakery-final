@@ -88,10 +88,10 @@
     document.getElementById('editCustomerForm').addEventListener('submit', function (event) {
         let isValid = true;
 
-        const firstName = document.querySelector('input[name="FirstName"]');
-        const lastName = document.querySelector('input[name="LastName"]');
-        const address = document.querySelector('input[name="Address"]');
-        const accountBalance = document.querySelector('input[name="AccountBalance"]');
+        const firstName = document.querySelector('input[name="Customer.FirstName"]');
+        const lastName = document.querySelector('input[name="Customer.LastName"]');
+        const address = document.querySelector('input[name="Customer.Address"]');
+        const accountBalance = document.querySelector('input[name="Customer.AccountBalance"]');
 
         if (!firstName.value.trim()) {
             isValid = false;

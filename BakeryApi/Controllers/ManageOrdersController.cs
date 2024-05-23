@@ -110,7 +110,7 @@ namespace BakeryApi.Controllers
             try
             {
                 OrdersRepository repo = new OrdersRepository();
-                List<Order> ordersSearchResult = repo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(request.Details));
+                List<Order> ordersSearchResult = repo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(request.Details.ToUpper()));
                 var response = ordersSearchResult.Select(order => GenerateResponse(order, new CustomersRepository(), new BakersRepository())).ToList();
                 return new JsonResult(response);
             }

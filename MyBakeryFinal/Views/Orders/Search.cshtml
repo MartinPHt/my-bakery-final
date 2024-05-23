@@ -39,68 +39,71 @@
 <table class="table">
 
     <tr>
-        <th>
+        <th style="text-align: center">
             Details
         </th>
-        <th>
+        <th style="text-align: center">
             Quantity
         </th>
-        <th>
+        <th style="text-align: center">
             Customer
         </th>
-        <th>
+        <th style="text-align: center">
             Baker
         </th>
-        <th>
-            Tip
-        </th>
-        <th>
-            Express delivery
-        </th>
-        <th>
+        <th style="text-align: center">
             Placed On
         </th>
-        <th>
-            Total
+        <th style="text-align: center">
+            Express delivery
+        </th>
+        <th style="text-align: center">
+            Total (BGN)
+        </th>
+        <th style="text-align: center">
+            Tip (BGN)
+        </th>
+        <th style="text-align: center" colspan="2">
+            Actions
         </th>
     </tr>
 
     @foreach (var item in Model.Orders)
     {
         <tr>
-            <td>
+            <td style="text-align: center">
                 @item.Details
             </td>
-            <td>
+            <td style="text-align: center">
                 @item.Quantity
             </td>
-            <td>
+            <td style="text-align: center">
                 @item?.Customer?.FirstName @item?.Customer?.LastName
             </td>
-            <td>
+            <td style="text-align: center">
                 @item?.Baker?.FirstName @item?.Baker?.LastName
             </td>
-            <td>
-                @item?.Tip
+            <td style="text-align: center">
+                @item?.PlacedOn
             </td>
             @if (item.IsExpress)
             {
-                <td>Yes</td>
+                <td style="text-align: center">Yes</td>
             }
             else
             {
-                <td>No</td>
+                <td style="text-align: center">No</td>
             }
-            <td>
-                @item?.PlacedOn
-            </td>
-            <td>
+            <td style="text-align: center">
                 @item?.Total
             </td>
-            <td>
+            <td style="text-align: center">
+                @item?.Tip
+            </td>
+            <td style="text-align: center">
                 <a href="/Orders/Edit?id=@item.Id" class="text-primary">Edit</a>
             </td>
-            <td>
+            <td style="text-align: center">
                 <a href="/Orders/Delete?id=@item.Id" class="text-danger" method="delete" onclick="return confirm('Delete Order?');">Delete</a>
             </td>
         </tr>

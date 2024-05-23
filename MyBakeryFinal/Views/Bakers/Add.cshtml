@@ -88,8 +88,8 @@
 
         const firstName = document.querySelector('input[name="FirstName"]');
         const lastName = document.querySelector('input[name="LastName"]');
-        const address = document.querySelector('input[name="Address"]');
-        const accountBalance = document.querySelector('input[name="AccountBalance"]');
+        const address = document.querySelector('input[name="EmailAddress"]');
+        const accountBalance = document.querySelector('input[name="Salary"]');
 
         if (!firstName.value.trim()) {
             isValid = false;
@@ -109,7 +109,7 @@
 
         if (!address.value.trim()) {
             isValid = false;
-            alert('Address is required.');
+            alert('Email Address is required.');
             address.focus();
             event.preventDefault();
             return false;
@@ -117,7 +117,7 @@
 
         if (!accountBalance.value.trim()) {
             isValid = false;
-            alert('Account Balance is required.');
+            alert('Salary is required.');
             accountBalance.focus();
             event.preventDefault();
             return false;
@@ -125,7 +125,7 @@
 
         if (isNaN(accountBalance.value) || !accountBalance.value.match(/^\d+(\.\d+)?$/)) {
             isValid = false;
-            alert('Account Balance must be a valid number.');
+            alert('Salary must be a valid number.');
             accountBalance.focus();
             event.preventDefault();
             return false;

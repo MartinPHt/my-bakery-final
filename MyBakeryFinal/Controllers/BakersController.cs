@@ -39,6 +39,7 @@ namespace MyBakeryFinal.Controllers
                     Salary = bakerResponse.Salary,
                     IsFullTime = bakerResponse.IsFullTime,
                     RegisteredOn = bakerResponse.RegisteredOn,
+                    TotalOrders = bakerResponse.TotalOrders,
                 }).ToList();
 
                 vm.Bakers = allBakers;

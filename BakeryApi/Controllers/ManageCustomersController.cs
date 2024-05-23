@@ -81,16 +81,7 @@ namespace BakeryApi.Controllers
                     customer.TotalOrders = currentCount;
                 }
 
-                var response = allCustomers.Select(customer => new CustomerResponse()
-                {
-                    Id = customer.Id,
-                    FirstName = customer.FirstName,
-                    LastName = customer.LastName,
-                    Address = customer.Address,
-                    AccountBalance = customer.AccountBalance,
-                    DeluxeAccount = customer.DeluxeAccount,
-                    RegisteredOn =customer.RegisteredOn,
-                }).ToList();
+                var response = allCustomers.Select(customer => GenerateResponse(customer)).ToList();
 
                 return new JsonResult(response);
             }
@@ -151,18 +142,9 @@ namespace BakeryApi.Controllers
             try
             {
                 CustomersRepository repo = new CustomersRepository();
-                List<Customer> customersSearchResult = repo.GetAll(n => n.FirstName == request.FirstName);
+                List<Customer> customersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(request.FirstName.ToUpper()));
 
-                var response = customersSearchResult.Select(customer => new CustomerResponse()
-                {
-                    Id = customer.Id,
-                    FirstName = customer.FirstName,
-                    LastName = customer.LastName,
-                    Address = customer.Address,
-                    AccountBalance = customer.AccountBalance,
-                    DeluxeAccount = customer.DeluxeAccount,
-                    RegisteredOn = customer.RegisteredOn,
-                }).ToList();
+                var response = customersSearchResult.Select(customer => GenerateResponse(customer)).ToList();
 
                 return new JsonResult(response);
             }
@@ -182,6 +164,7 @@ namespace BakeryApi.Controllers
             response.AccountBalance = customer.AccountBalance;
             response.DeluxeAccount = customer.DeluxeAccount;
             response.RegisteredOn = customer.RegisteredOn;
+            response.TotalOrders = customer.TotalOrders;
 
             return response;
         }
