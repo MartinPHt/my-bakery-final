@@ -10,31 +10,38 @@ namespace MyBakeryFinal.ViewModels.Orders
         public AddVM()
         {
             Customers = new List<Customer>();
+            Bakers = new List<Baker>();
         }
-
-        [DisplayName("Tip: ")]
-        [Required(ErrorMessage = "This field is Required!")]
-        public double Tip { get; set; }
 
         [DisplayName("Details: ")]
         [Required(ErrorMessage = "This field is Required!")]
         public string Details { get; set; }
 
+        [DisplayName("Quantity: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public int Quantity { get; set; }
+
+        [DisplayName("Tip (BGN): ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public double Tip { get; set; }
+
+        [DisplayName("Total (BGN): ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public double Total { get; set; }
+
+        [DisplayName("Express Delivery: ")]
+        public bool IsExpress { get; set; }
 
         [DisplayName("Customer: ")]
         [Required(ErrorMessage = "This field is Required!")]
         public int Customer_ID { get; set; }
 
-        [DisplayName("Express Delivery: ")]
- 
-        public bool isExpress { get; set; }
-
         public List<Customer> Customers { get; set; }
 
-        [DisplayName("Recipe 1")]
-        public int Recipe1ID { get; set; }
+        [DisplayName("Baker: ")]
+        [Required(ErrorMessage = "This field is Required!")]
+        public int Baker_ID { get; set; }
 
-		[DisplayName("Recipe 2")]
-		public int Recipe2ID { get; set; }
+        public List<Baker> Bakers { get; set; }
     }
 }

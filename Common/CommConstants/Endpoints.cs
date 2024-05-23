@@ -26,7 +26,7 @@
         public const string GetAllOrdersEndPoint = "getallorders";
         public const string UpdateOrderEndPoint = "updateorder";
         public const string DeleteOrderEndPoint = "deleteorder";
-        public const string SearchOrdersByFirstNameEndPoint = "searchorder";
+        public const string SearchOrdersByDetailsEndPoint = "searchorder";
         #endregion
     }
 }

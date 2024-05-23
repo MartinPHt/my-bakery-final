@@ -170,7 +170,7 @@ namespace MyBakeryFinal.Controllers
                 var responseList = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new SearchCustomersByFirstNameRequest(firstName));
 
                 if (responseList == null)
-                    return BadRequest("Couldn't add customer. Responce message from the server is null");
+                    return BadRequest("Couldn't search for customers. Responce message from the server is null");
 
                 SearchVM vm = new SearchVM();
                 var customersList = responseList.Select(response => new Customer()

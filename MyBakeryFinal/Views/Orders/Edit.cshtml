@@ -1,130 +1,103 @@
-﻿@model MyBakeryFinal.ViewModels.Orders.EditVM
+﻿@using MyBakeryFinal.ViewModels.Orders
+@model EditVM
 @{
 }
 
 <h2> Edit Order</h2>
 
 <form action="/Orders/Edit" method="post">
-<div>
-		<div class="grid">
-			@Html.HiddenFor(m => m.Order.Customer.Id)
-			@Html.HiddenFor(m => m.Order.Id)
-			<div class="row mb-2">
-				<div class="col-2">
-					@Html.LabelFor(m => m.Order.Details)
-				</div>
-				<div class="col-2">
-					@Html.TextBoxFor(m => m.Order.Details)
-				</div>
-				<div class="col-2">
-					@Html.ValidationMessageFor(m => m.Order.Details)
-				</div>
-			</div>
+    <div>
+        <div class="grid">
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Details)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Order.Details)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Order.Details)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Quantity)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Order.Quantity)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Order.Quantity)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Total)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Order.Total)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Order.Total)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Tip)
+                </div>
+                <div class="col-2">
+                    @Html.TextBoxFor(m => m.Order.Tip)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Order.Tip)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.IsExpress)
+                </div>
+                <div class="col-2">
+                    @Html.CheckBoxFor(m => m.Order.IsExpress)
+                </div>
+                <div class="col-2">
+                    @Html.ValidationMessageFor(m => m.Order.IsExpress)
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Customer_ID)
+                </div>
+                <div class="col-2">
+                    <select id="Customer_ID" name="Customer_ID">
+                        @Html.Raw(ViewBag.CustomerOptions)
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2">
+                    @Html.LabelFor(m => m.Order.Baker_ID)
+                </div>
+                <div class="col-2">
+                    <select id="Baker_ID" name="Baker_ID">
+                        @Html.Raw(ViewBag.BakerOptions)
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="row mb-2">
+                    <div class="col-3">
+                        @Html.ValidationMessage("summaryError")
+                    </div>
+                </div>
 
-
-		</div>
-
-		<div class="row mb-2">
-			<div class="col-2">
-				@Html.LabelFor(m => m.Order.Tip)
-			</div>
-			<div class="col-2">
-				@Html.TextBoxFor(m => m.Order.Tip, new { type = "number" })
-			</div>
-			<div class="col-2">
-				@Html.ValidationMessageFor(m => m.Order.Tip)
-			</div>
-		</div>
-		<div class="row mb-2">
-			<div class="col-2">
-				@Html.LabelFor(m => m.Order.isExpress)
-			</div>
-			<div class="col-2">
-				@Html.CheckBoxFor(m => m.Order.isExpress)
-			</div>
-			<div class="col-2">
-				@Html.ValidationMessageFor(m => m.Order.isExpress)
-			</div>
-		</div>
-		<div class="row mb-2">
-			<div class="col-2">
-				@Html.LabelFor(m => m.Customer_ID)
-			</div>
-			<div class="col-2">
-				<select id="Customer_ID" name="Customer_ID">
-					@foreach (var customer in Model.Customers)
-					{
-						<option value="@customer.Id">@customer.FirstName</option>
-					}
-				</select>
-
-
-			</div>
-			<div class="col-2">
-				@Html.ValidationMessageFor(m => m.Order.isExpress)
-
-			</div>
-		</div>
-		<div class="row mb-2">
-	
-
-			@* @if (Model.Recipes.Count > 0)
-			{
-				<div class="row mb-2">
-					<div class="col-2">
-						@Html.LabelFor(m => m.Recipe1ID)
-					</div>
-					<div class="col-2">
-						<select id="Recipe1ID" name="Recipe1ID">
-							@foreach (var recipe in Model.Recipes)
-							{
-								<option value="@recipe.Id">@recipe.Name</option>
-							}
-						</select>
-
-
-					</div>
-
-				</div>
-
-			}
-
-			@if (Model.Recipes.Count > 1)
-			{
-				<div class="row mb-2">
-					<div class="col-2">
-						@Html.LabelFor(m => m.Recipe2ID)
-					</div>
-					<div class="col-2">
-						<select id="Recipe2ID" name="Recipe2ID">
-							@foreach (var recipe in Model.Recipes)
-							{
-								<option value="@recipe.Id">@recipe.Name</option>
-							}
-						</select>
-
-
-					</div>
-
-				</div>
-			} *@
-
-
-
-
-			<div class="row mb-2">
-				<div class="col-3">
-					@Html.ValidationMessage("summaryError")
-				</div>
-			</div>
-
-			<div class="row mb-2">
-				<div class="col-2"></div>
-				<div class="col-2">
-					<input type="submit" class="right" value="Save" />
-					<a href="/Orders/Index" class="right">Back</a>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div class="row mb-2">
+                    <div class="col-2"></div>
+                    <div class="col-2">
+                        <input type="submit" class="right" value="Save" />
+                        <a href="/Orders/Index" class="right">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form> 

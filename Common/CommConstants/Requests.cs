@@ -161,4 +161,94 @@
         public string FirstName { get; }
     }
     #endregion
+
+    #region Order Request
+    public class CreateOrderRequest : DataRequest
+    {
+        public CreateOrderRequest(string details, int quantity, double tip, double total, bool isExpress, DateTime placedOn, int customer_ID, int baker_ID)
+            : base(Endpoints.CreateOrderEndPoint)
+        {
+            Details = details;
+            Quantity = quantity;
+            Tip = tip;
+            Total = total;
+            IsExpress = isExpress;
+            PlacedOn = placedOn;
+            Customer_ID = customer_ID;
+            Baker_ID = baker_ID;
+        }
+        public string Details { get; set; }
+        public int Quantity { get; set; }
+        public double Tip { get; set; }
+        public double Total { get; set; }
+        public bool IsExpress { get; set; }
+        public DateTime PlacedOn { get; set; }
+        public int Customer_ID { get; set; }
+        public int Baker_ID { get; set; }
+    }
+
+    public class GetOrderRequest : DataRequest
+    {
+        public GetOrderRequest(int id)
+            : base(Endpoints.GetOrderEndPoint)
+        {
+            Id = id;
+        }
+        public int Id { get; }
+    }
+
+    public class GetAllOrdersRequest : NoDataRequest
+    {
+        public GetAllOrdersRequest()
+            : base(Endpoints.GetAllOrdersEndPoint)
+        { }
+    }
+
+    public class UpdateOrderRequest : DataRequest
+    {
+        public UpdateOrderRequest(int id, string details, int quantity, double tip, double total, bool isExpress, DateTime placedOn, int customer_ID, int baker_ID)
+            : base(Endpoints.UpdateOrderEndPoint)
+        {
+            Id = id;
+            Details = details;
+            Quantity = quantity;
+            Tip = tip;
+            Total = total;
+            IsExpress = isExpress;
+            PlacedOn = placedOn;
+            Customer_ID = customer_ID;
+            Baker_ID = baker_ID;
+        }
+
+        public int Id { get; set; }
+        public string Details { get; set; }
+        public int Quantity { get; set; }
+        public double Tip { get; set; }
+        public double Total { get; set; }
+        public bool IsExpress { get; set; }
+        public DateTime PlacedOn { get; set; }
+        public int Customer_ID { get; set; }
+        public int Baker_ID { get; set; }
+    }
+
+    public class DeleteOrderRequest : DataRequest
+    {
+        public DeleteOrderRequest(int id)
+            : base(Endpoints.DeleteOrderEndPoint)
+        {
+            Id = id;
+        }
+        public int Id { get; }
+    }
+
+    public class SearchOrdersByDetailsRequest : DataRequest
+    {
+        public SearchOrdersByDetailsRequest(string details)
+            : base(Endpoints.SearchOrdersByDetailsEndPoint)
+        {
+            Details = details;
+        }
+        public string Details { get; }
+    }
+    #endregion
 }

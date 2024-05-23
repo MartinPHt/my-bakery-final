@@ -9,9 +9,9 @@ namespace BakeryApi.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Baker>()
-                    .HasIndex(baker => baker.EmailAddress)
-                    .IsUnique();
+            //modelBuilder.Entity<Baker>()
+            //        .HasIndex(baker => baker.EmailAddress)
+            //        .IsUnique();
         }
 
         public DbSet<Baker> Bakers { get; set; }

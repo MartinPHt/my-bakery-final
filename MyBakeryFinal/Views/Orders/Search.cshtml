@@ -16,10 +16,11 @@
         .search-container button {
             height: 34px;
             margin-left: 5px;
+            margin-right: 5px;
         }
 </style>
 
-@model MyBakeryFinal.ViewModels.Orders.IndexVM
+@model MyBakeryFinal.ViewModels.Orders.SearchVM
 @{
 }
 
@@ -29,6 +30,7 @@
     <form id="searchForm" action="/Orders/Search" method="post" onsubmit="return validateSearchForm()">
         <input type="text" id="firstName" placeholder="Search.." name="firstName">
         <button type="submit" class="btn btn-success p-3 py-1">Search</button>
+        <a href="/Orders/Index" class="btn btn-danger p-3 py-1">Reset</a>
     </form>
 </div>
 
@@ -37,71 +39,68 @@
 <table class="table">
 
     <tr>
-        <th style="text-align: center">
+        <th>
             Details
         </th>
-        <th style="text-align: center">
+        <th>
             Quantity
         </th>
-        <th style="text-align: center">
+        <th>
             Customer
         </th>
-        <th style="text-align: center">
+        <th>
             Baker
         </th>
-        <th style="text-align: center">
-            Placed On
+        <th>
+            Tip
         </th>
-        <th style="text-align: center">
+        <th>
             Express delivery
         </th>
-        <th style="text-align: center">
-            Total (BGN)
+        <th>
+            Placed On
         </th>
-        <th style="text-align: center">
-            Tip (BGN)
-        </th>
-        <th style="text-align: center" colspan="2">
-            Actions
+        <th>
+            Total
         </th>
     </tr>
 
     @foreach (var item in Model.Orders)
     {
         <tr>
-            <td style="text-align: center">
+            <td>
                 @item.Details
             </td>
-            <td style="text-align: center">
+            <td>
                 @item.Quantity
             </td>
-            <td style="text-align: center">
+            <td>
                 @item?.Customer?.FirstName @item?.Customer?.LastName
             </td>
-            <td style="text-align: center">
+            <td>
                 @item?.Baker?.FirstName @item?.Baker?.LastName
             </td>
-            <td style="text-align: center">
-                @item?.PlacedOn
+            <td>
+                @item?.Tip
             </td>
             @if (item.IsExpress)
             {
-                <td style="text-align: center">Yes</td>
+                <td>Yes</td>
             }
             else
             {
-                <td style="text-align: center">No</td>
+                <td>No</td>
             }
-            <td style="text-align: center">
+            <td>
+                @item?.PlacedOn
+            </td>
+            <td>
                 @item?.Total
             </td>
-            <td style="text-align: center">
-                @item?.Tip
-            </td>
-            <td style="text-align: center">
+            <td>
                 <a href="/Orders/Edit?id=@item.Id" class="text-primary">Edit</a>
             </td>
-            <td style="text-align: center">
+            <td>
                 <a href="/Orders/Delete?id=@item.Id" class="text-danger" method="delete" onclick="return confirm('Delete Order?');">Delete</a>
             </td>
         </tr>

@@ -2,10 +2,11 @@
 using MyBakeryFinal.ViewModels.Orders;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using MyBakeryFinal.ExtensionMethods;
 using Common.Entities;
 using Microsoft.AspNetCore.Authorization;
-using System.Runtime.CompilerServices;
+using Common.CommConstants;
+using MyBakeryFinal.Services;
+using System.Text;
 
 namespace MyBakeryFinal.Controllers
 {
@@ -21,193 +22,200 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            IndexVM vm = new IndexVM();
-            //         List<Customer> allCustomers;
+            try
+            {
+                var response = await OrderService.Instance.SendRequest<List<OrderResponse>>(new GetAllOrdersRequest());
+                if (response == null)
+                    return BadRequest("Couldn't load orders. Responce message from the server is null");
 
-            //CustomersRepository customersRepo = new CustomersRepository();
-            //         OrdersRepository ordersRepository = new OrdersRepository();
-            //         RecipesRepository recipesRepository = new RecipesRepository();
-            //RecipesToOrdersRepository recipesToOrdersRepository = new RecipesToOrdersRepository();
-            //         List<Order> Orders = ordersRepository.GetAll(i => true);
-            //List<Recipe> recipes = recipesRepository.GetAll(i => true);
-            //allCustomers = customersRepo.GetAll(i => true);
+                IndexVM vm = new IndexVM();
+                var allOrders = response.Select(orderResponse => GenerateOrder(orderResponse)).ToList();
 
-
-
-            //         foreach (var order in Orders)
-            //         {
-            //             Customer customer = allCustomers.Find(c => c.Id == order.Customer_ID);
-            //             order.Customer = customer;
-            //         }
-
-            //         vm.Orders = Orders;
-
-            //List<RecipesToOrders> allOrdersRelations = recipesToOrdersRepository.GetAll(item => true);
-            //var ordersToRecipes = new Dictionary<int, List<string>>();
-            //         foreach (var entry in allOrdersRelations)
-            //         {
-            //             Recipe recipe = recipes.Find(r => r.Id == entry.Recipe_ID);
-            //             if (ordersToRecipes.ContainsKey(entry.Order_ID))
-            //             {
-
-            //                 ordersToRecipes[entry.Order_ID].Add(recipe.Name);
-            //             }
-            //             else
-            //             {
-            //                 ordersToRecipes.Add(entry.Order_ID, new List<string>() { recipe.Name });
-            //             }
-            //         }
-
-            //         vm.OrderToRecipes = ordersToRecipes;
-            return View(vm);
+                vm.Orders = allOrders;
+                return View(vm);
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add()
         {
+            //Retreive all customers
+            var customersResponse = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
+
+            if (customersResponse == null)
+                return BadRequest("Couldn't load customers. Responce message from the server is null");
+
+            //Retreive all Bakers
+            var bakersResponse = await BakerService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
+
+            if (bakersResponse == null)
+                return BadRequest("Couldn't load bakers. Responce message from the server is null");
+
             AddVM vm = new AddVM();
-            //List<Customer> allCustomers = new List<Customer>();
-            //List<Recipe> allRecipes = new List<Recipe>();
-
-            //await Task.Run(() =>
-            //{
-            //    CustomersRepository customersRepo = new CustomersRepository();
-            //    RecipesRepository recipesRepo = new RecipesRepository();
-            //    allCustomers = customersRepo.GetAll(i => true);
-            //    allRecipes = recipesRepo.GetAll(i => true);
-            //});
-
-            //vm.Customers = allCustomers;
-            //vm.Recipes = allRecipes;
+            vm.Customers = customersResponse.Select(customerResponse => GenerateCustomer(customerResponse)).ToList();
+            vm.Bakers = bakersResponse.Select(bakerResponse => GenerateBaker(bakerResponse)).ToList();
 
             return View(vm);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(AddVM addVM)
+        public async Task<IActionResult> Add(AddVM addVM)
         {
 
-            //OrdersRepository ordersRepo = new OrdersRepository();
-            //CustomersRepository customersRepo = new CustomersRepository();
-            //RecipesToOrdersRepository recipesToOrdersRepo = new RecipesToOrdersRepository();
+            try
+            {
+                var response = await OrderService.Instance.SendRequest<OkResult>(new CreateOrderRequest(addVM.Details, addVM.Quantity, addVM.Tip, addVM.Total, addVM.IsExpress, DateTime.Now, addVM.Customer_ID, addVM.Baker_ID));
 
+                if (response == null)
+                    return BadRequest("Couldn't add order. Responce message from the server is null");
 
-            //Order item = new Order();
-            //RecipesToOrders recipesToOrdersItem1 = new RecipesToOrders();
-            //RecipesToOrders recipesToOrdersItem2 = new RecipesToOrders();
-            //Customer customer = customersRepo.GetAll(customer => customer.Id == addVM.Customer_ID).FirstOrDefault();
-
-            //if (customer == null)
-            //{
-            //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            //}
-
-            //item.Tip = addVM.Tip;
-            //item.isExpress = addVM.isExpress;
-            //item.Details = addVM.Details;
-            //item.Customer_ID = addVM.Customer_ID;
-
-            //ordersRepo.Save(item);
-
-            //if (addVM.Recipe1ID != 0)
-            //{
-            //    recipesToOrdersItem1.Order_ID = item.Id;
-            //    recipesToOrdersItem1.Recipe_ID = addVM.Recipe1ID;
-            //    recipesToOrdersRepo.Save(recipesToOrdersItem1);
-            //}
-
-            //if (addVM.Recipe2ID != 0)
-            //{
-            //    recipesToOrdersItem2.Order_ID = item.Id;
-            //    recipesToOrdersItem2.Recipe_ID = addVM.Recipe2ID;
-            //    recipesToOrdersRepo.Save(recipesToOrdersItem2);
-            //}
-
-
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            //OrdersRepository ordersRepo = new OrdersRepository();
-            //RecipesRepository recipesRepository = new RecipesRepository();
-            //CustomersRepository customersRepo = new CustomersRepository();
-
-            //Order order = ordersRepo.GetAll(order => order.Id == id).FirstOrDefault();
-            //List<Customer> customers = customersRepo.GetAll(b => true).ToList();
-            //List<Recipe> allRecipes = recipesRepository.GetAll(r => true).ToList();
+            var orderResponse = await OrderService.Instance.SendRequest<OrderResponse>(new GetOrderRequest(id));
 
             EditVM vm = new EditVM();
-            //vm.Order = order;
-            //vm.Customers = customers;
-            //vm.Recipes = allRecipes;
+            vm.Order = GenerateOrder(orderResponse);
+
+
+            //Retreive all customers
+            var customersResponse = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
+
+            if (customersResponse == null)
+                return BadRequest("Couldn't load customers which are needed for editing orders. Responce message from the server is null");
+
+            //Retreive all Bakers
+            var bakersResponse = await BakerService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
+
+            if (bakersResponse == null)
+                return BadRequest("Couldn't load bakers which are needed for editing orders. Responce message from the server is null");
+
+            vm.Customers = customersResponse.Select(customerResponse => GenerateCustomer(customerResponse)).ToList();
+            vm.Bakers = bakersResponse.Select(bakerResponse => GenerateBaker(bakerResponse)).ToList();
+
+            //Generate html raw for select containers for Baker and Customer
+            //with preselected value matching the one in the database
+            var optionsHtml = new StringBuilder();
+            foreach (var baker in vm.Bakers)
+            {
+                var selected = baker.Id == vm.Order.Baker_ID ? "selected=\"selected\"" : "";
+                optionsHtml.Append($"<option {selected} value=\"{baker.Id}\">{baker.FirstName} {baker.LastName}</option>");
+            }
+            ViewBag.BakerOptions = optionsHtml.ToString();
+
+            optionsHtml = new StringBuilder();
+            foreach (var customer in vm.Customers)
+            {
+                var selected = customer.Id == vm.Order.Customer_ID ? "selected=\"selected\"" : "";
+                optionsHtml.Append($"<option {selected} value=\"{customer.Id}\">{customer.FirstName} {customer.LastName}</option>");
+            }
+            ViewBag.CustomerOptions = optionsHtml.ToString();
+
             return View(vm);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Edit(EditVM vm)
+        public async Task<IActionResult> Edit(EditVM vm)
         {
-            //OrdersRepository ordersRepo = new OrdersRepository();
-            //RecipesRepository recipesRepo = new RecipesRepository();
-            //CustomersRepository customersRepo = new CustomersRepository();
-            //RecipesToOrdersRepository recipesToOrdersRepository = new RecipesToOrdersRepository();
+            try
+            {
+                var response = await OrderService.Instance.SendRequest<OkResult>(new UpdateOrderRequest(vm.Order.Id, vm.Order.Details, vm.Order.Quantity, vm.Order.Tip, vm.Order.Total, vm.Order.IsExpress, vm.Order.PlacedOn, vm.Order.Customer_ID, vm.Order.Baker_ID));
 
-            //List<RecipesToOrders> allRecipesToOrders = recipesToOrdersRepository.GetAll(r => true).ToList();
-            //Customer customer = customersRepo.GetAll(customer => customer.Id == vm.Customer_ID).FirstOrDefault();
-            //RecipesToOrders recipesToOrders = new RecipesToOrders();
+                if (response == null)
+                    return BadRequest("Couldn't edit Order. Responce message from the server is null");
 
-            //vm.Order.Customer = customer;
-
-            //if (vm.Recipe1ID != 0)
-            //{
-
-            //    RecipesToOrders recipeToOrder = allRecipesToOrders.Find(entry => entry.Order_ID == vm.Order.Id && entry.Recipe_ID == vm.Recipe1ID);
-            //    if (recipeToOrder == null)
-            //    {
-            //        recipeToOrder = new RecipesToOrders();
-            //        recipeToOrder.Order_ID = vm.Order.Id;
-            //    }
-            //    recipeToOrder.Recipe_ID = vm.Recipe1ID;
-            //    recipesToOrdersRepository.Save(recipeToOrder);
-
-            //}
-
-            //if (vm.Recipe2ID != 0)
-            //{
-
-            //    RecipesToOrders recipeToOrder = allRecipesToOrders.Find(entry => entry.Order_ID == vm.Order.Id && entry.Recipe_ID == vm.Recipe2ID);
-
-            //    if (recipeToOrder == null)
-            //    {
-            //        recipeToOrder = new RecipesToOrders();
-            //        recipeToOrder.Order_ID = vm.Order.Id;
-            //    }
-
-            //    recipeToOrder.Recipe_ID = vm.Recipe2ID;
-            //    recipesToOrdersRepository.Save(recipeToOrder);
-
-            //}
-
-            //ordersRepo.Save(vm.Order);
-
-            return RedirectToAction("Index");
-
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         [Authorize]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            //OrdersRepository repo = new OrdersRepository();
-            //Order order = new Order();
-            //order.Id = id;
+            try
+            {
+                var response = await OrderService.Instance.SendRequest<OkResult>(new DeleteOrderRequest(id));
 
-            //repo.Delete(order);
+                if (response == null)
+                    return BadRequest("Couldn't delete order. Responce message from the server is null");
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Search(string firstName)
+        {
+            try
+            {
+                var responseList = await OrderService.Instance.SendRequest<List<OrderResponse>>(new SearchOrdersByDetailsRequest(firstName));
+
+                if (responseList == null)
+                    return BadRequest("Couldn't search for orders. Responce message from the server is null");
+
+                SearchVM vm = new SearchVM();
+                var ordersList = responseList.Select(response => GenerateOrder(response)).ToList();
+
+                vm.Orders = ordersList;
+                return View(vm);
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine(httpRequestException);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "External service is unavailable. Please try again later.", details = httpRequestException.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred. Please try again later.", details = ex.Message });
+            }
         }
 
         public IActionResult Privacy()
@@ -220,5 +228,55 @@ namespace MyBakeryFinal.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        private Order GenerateOrder(OrderResponse responce)
+        {
+            return new Order()
+            {
+                Id = responce.Id,
+                Details = responce.Details,
+                Tip = responce.Tip,
+                Total = responce.Total,
+                IsExpress = responce.IsExpress,
+                PlacedOn = responce.PlacedOn,
+                Quantity = responce.Quantity,
+
+                //Foreign Keys
+                Customer = responce.Customer,
+                Customer_ID = responce.Customer.Id,
+                Baker = responce.Baker,
+                Baker_ID = responce.Baker.Id,
+            };
+        }
+
+        private Customer GenerateCustomer(CustomerResponse customerResponse)
+        {
+            return new Customer()
+            {
+                Id = customerResponse.Id,
+                FirstName = customerResponse.FirstName,
+                LastName = customerResponse.LastName,
+                Address = customerResponse.Address,
+                AccountBalance = customerResponse.AccountBalance,
+                DeluxeAccount = customerResponse.DeluxeAccount,
+                RegisteredOn = customerResponse.RegisteredOn,
+            };
+        }
+
+        private Baker GenerateBaker(BakerResponse bakerResponse)
+        {
+            return new Baker()
+            {
+                Id = bakerResponse.Id,
+                FirstName = bakerResponse.FirstName,
+                LastName = bakerResponse.LastName,
+                EmailAddress = bakerResponse.EmailAddress,
+                Salary = bakerResponse.Salary,
+                IsFullTime = bakerResponse.IsFullTime,
+                RegisteredOn = bakerResponse.RegisteredOn,
+            };
+        }
+
+
     }
 }
