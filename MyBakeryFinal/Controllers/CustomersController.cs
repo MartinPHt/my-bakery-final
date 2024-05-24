@@ -7,6 +7,7 @@ using MyBakeryFinal.Services;
 using MyBakeryFinal.ViewModels.Customers;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Security.Cryptography;
 
 namespace MyBakeryFinal.Controllers
 {
@@ -24,7 +25,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
+                var response = await CustomerService.Instance.GetAllAsync<List<CustomerResponse>>();
 
                 if (response == null)
                     return BadRequest("Couldn't load customers. Responce message from the server is null");
@@ -73,7 +74,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await CustomerService.Instance.SendRequest<CustomerResponse>(new CreateCustomerRequest(addVM.FirstName, addVM.LastName, addVM.Address, addVM.AccountBalance, addVM.DeluxeAccount, DateTime.Now));
+                var response = await CustomerService.Instance.PostAsync<CustomerResponse>(new CreateCustomerRequest(addVM.FirstName, addVM.LastName, addVM.Address, addVM.AccountBalance, addVM.DeluxeAccount, DateTime.Now));
 
                 if (response == null)
                     return BadRequest("Couldn't add customer. Responce message from the server is null");    
@@ -95,7 +96,7 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await CustomerService.Instance.SendRequest<CustomerResponse>(new GetCustomerRequest(id));
+            var response = await CustomerService.Instance.GetAsync<CustomerResponse>(id.ToString());
 
             Customer customer = new Customer()
             {
@@ -119,7 +120,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await CustomerService.Instance.SendRequest<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.FirstName, vm.Customer.LastName, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
+                var response = await CustomerService.Instance.PutAsync<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.FirstName, vm.Customer.LastName, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
 
                 if (response == null)
                     return BadRequest("Couldn't edit customer. Responce message from the server is null");
@@ -143,7 +144,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await CustomerService.Instance.SendRequest<OkResult>(new DeleteCustomerRequest(id));
+                var response = await CustomerService.Instance.DeleteAsync<OkResult>(id.ToString());
 
                 if (response == null)
                     return BadRequest("Couldn't edit customer. Responce message from the server is null");
@@ -168,7 +169,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var responseList = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new SearchCustomersByFirstNameRequest(firstName));
+                var responseList = await CustomerService.Instance.GetSearchAsync<List<CustomerResponse>>(firstName);
 
                 if (responseList == null)
                     return BadRequest("Couldn't search for customers. Responce message from the server is null");

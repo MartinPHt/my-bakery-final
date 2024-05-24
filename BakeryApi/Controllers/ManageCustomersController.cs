@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Common.Entities;
 using BakeryApi.Repositories;
-using System.Net;
-using System.Collections.Generic;
 
 namespace BakeryApi.Controllers
 {
@@ -11,25 +9,26 @@ namespace BakeryApi.Controllers
     [ApiController]
     public class ManageCustomersController : ControllerBase
     {
+        private readonly CustomersRepository _customersRepo;
+        private readonly OrdersRepository _ordersRepo;
+
         public ManageCustomersController()
         {
-
+            _customersRepo = new CustomersRepository();
+            _ordersRepo = new OrdersRepository();
         }
 
-        // Create/Edit
-        [HttpPost(Endpoints.CreateCustomerEndPoint)]
+        // Create
+        [HttpPost]
         public IActionResult CreateCustomer(CreateCustomerRequest request)
         {
             try
             {
-                //Save to database
-                CustomersRepository customersRepo = new CustomersRepository();
-                Customer customer = new Customer(request.FirstName, request.LastName, request.Address, request.AccountBalance, request.DeluxeAccount, request.RegisteredOn);
-                customersRepo.Save(customer);
+                var customer = new Customer(request.FirstName, request.LastName, request.Address, request.AccountBalance, request.DeluxeAccount, request.RegisteredOn);
+                _customersRepo.Save(customer);
 
-                //generate response
                 var response = GenerateResponse(customer);
-                return new JsonResult(response);
+                return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, response); // Return 201 Created
             }
             catch (Exception ex)
             {
@@ -37,19 +36,20 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetCustomerEndPoint)]
-        public IActionResult Get(GetCustomerRequest request)
+        // Retrieve by ID
+        [HttpGet("{id}")]
+        public IActionResult GetCustomer(int id)
         {
             try
             {
-                //Retrieve from database
-                CustomersRepository repo = new CustomersRepository();
-                Customer customer = repo.GetAll(n => n.Id == request.Id).Find(i => i.Id == request.Id);
+                var customer = _customersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (customer == null)
+                {
+                    return NotFound(); // Return 404 if not found
+                }
 
-                //generate response
                 var response = GenerateResponse(customer);
-
-                return new JsonResult(response);
+                return Ok(response); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -57,33 +57,22 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetAllCustomersEndPoint)]
+        // Retrieve all
+        [HttpGet]
         public IActionResult GetAll()
         {
             try
             {
-                CustomersRepository customersRepo = new CustomersRepository();
-                OrdersRepository ordersRepo = new OrdersRepository();
-                List<Customer> allCustomers = customersRepo.GetAll(i => true);
-                List<Order> allOrders = ordersRepo.GetAll(i => true);
+                var allCustomers = _customersRepo.GetAll(i => true);
+                var allOrders = _ordersRepo.GetAll(i => true);
 
                 foreach (var customer in allCustomers)
                 {
-                    int currentCount = 0;
-                    foreach (var order in allOrders)
-                    {
-                        if (order.Customer_ID == customer.Id)
-                        {
-                            currentCount++;
-                        }
-                    }
-
-                    customer.TotalOrders = currentCount;
+                    customer.TotalOrders = allOrders.Count(order => order.Customer_ID == customer.Id);
                 }
 
                 var response = allCustomers.Select(customer => GenerateResponse(customer)).ToList();
-
-                return new JsonResult(response);
+                return Ok(response); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -91,24 +80,47 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.UpdateCustomerEndPoint)]
-        public IActionResult Update(UpdateCustomerRequest request)
+        // Update
+        [HttpPut("{id}")]
+        public IActionResult UpdateCustomer(int id, UpdateCustomerRequest request)
         {
             try
             {
-                CustomersRepository repo = new CustomersRepository();
-                var customer = new Customer()
+                var customer = _customersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (customer == null)
                 {
-                    Id = request.Id,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Address = request.Address,
-                    AccountBalance = request.AccountBalance,
-                    DeluxeAccount = request.DeluxeAccount,
-                    RegisteredOn = request.RegisteredOn
-                };
-                repo.Save(customer);
+                    return NotFound(); // Return 404 if not found
+                }
 
+                customer.FirstName = request.FirstName;
+                customer.LastName = request.LastName;
+                customer.Address = request.Address;
+                customer.AccountBalance = request.AccountBalance;
+                customer.DeluxeAccount = request.DeluxeAccount;
+                customer.RegisteredOn = request.RegisteredOn;
+
+                _customersRepo.Save(customer);
+                return Ok(); // Return 200 OK
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
+            }
+        }
+
+        // Delete
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCustomer(int id)
+        {
+            try
+            {
+                var customer = _customersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+
+                _customersRepo.Delete(customer);
                 return new JsonResult(Ok());
             }
             catch (Exception ex)
@@ -117,36 +129,15 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.DeleteCustomerEndPoint)]
-        public IActionResult Delete(DeleteCustomerRequest request)
+        [HttpGet("search/{searchWord}")]
+        public IActionResult SearchCustomersByFirstName(string searchWord)
         {
             try
             {
-                CustomersRepository repo = new CustomersRepository();
-
-                Customer customer = new Customer();
-                customer.Id = request.Id;
-
-                repo.Delete(customer);
-                return new JsonResult(Ok());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while processing your request.", details = ex.Message });
-            }
-        }
-
-        [HttpPost(Endpoints.SearchCustomersByFirstNameEndPoint)]
-        public IActionResult Srearch(SearchCustomersByFirstNameRequest request)
-        {
-            try
-            {
-                CustomersRepository repo = new CustomersRepository();
-                List<Customer> customersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(request.FirstName.ToUpper()));
-
+                var customersSearchResult = _customersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
                 var response = customersSearchResult.Select(customer => GenerateResponse(customer)).ToList();
 
-                return new JsonResult(response);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -156,17 +147,17 @@ namespace BakeryApi.Controllers
 
         private CustomerResponse GenerateResponse(Customer customer)
         {
-            var response = new CustomerResponse();
-            response.Id = customer.Id;
-            response.FirstName = customer.FirstName;
-            response.LastName = customer.LastName;
-            response.Address = customer.Address;
-            response.AccountBalance = customer.AccountBalance;
-            response.DeluxeAccount = customer.DeluxeAccount;
-            response.RegisteredOn = customer.RegisteredOn;
-            response.TotalOrders = customer.TotalOrders;
-
-            return response;
+            return new CustomerResponse
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Address = customer.Address,
+                AccountBalance = customer.AccountBalance,
+                DeluxeAccount = customer.DeluxeAccount,
+                RegisteredOn = customer.RegisteredOn,
+                TotalOrders = customer.TotalOrders
+            };
         }
     }
 }

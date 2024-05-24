@@ -11,20 +11,19 @@ namespace BakeryApi.Controllers
     {
         public ManageBakersController()
         {
-            
         }
 
-        [HttpPost(Endpoints.CreateBakerEndPoint)]
+        [HttpPost]
         public IActionResult CreateBaker(CreateBakerRequest request)
         {
             try
             {
-                //Save to database
+                // Save to database
                 BakersRepository bakersRepo = new BakersRepository();
                 Baker baker = new Baker(request.FirstName, request.LastName, request.EmailAddress, request.Salary, request.IsFullTime, request.RegisteredOn);
                 bakersRepo.Save(baker);
 
-                //generate response
+                // Generate response
                 var response = GenerateResponse(baker);
                 return new JsonResult(response);
             }
@@ -34,18 +33,22 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetBakerEndPoint)]
-        public IActionResult Get(GetBakerRequest request)
+        [HttpGet("{id}")]
+        public IActionResult GetBaker(int id)
         {
             try
             {
-                //Retrieve from database
+                // Retrieve from database
                 BakersRepository repo = new BakersRepository();
-                Baker baker = repo.GetAll(n => n.Id == request.Id).Find(i => i.Id == request.Id);
+                Baker baker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
 
-                //generate response
+                if (baker == null)
+                {
+                    return NotFound();
+                }
+
+                // Generate response
                 var response = GenerateResponse(baker);
-
                 return new JsonResult(response);
             }
             catch (Exception ex)
@@ -54,8 +57,8 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetAllBakersEndPoint)]
-        public IActionResult GetAll()
+        [HttpGet]
+        public IActionResult GetAllBakers()
         {
             try
             {
@@ -79,7 +82,6 @@ namespace BakeryApi.Controllers
                 }
 
                 var response = allBakers.Select(baker => GenerateResponse(baker)).ToList();
-
                 return new JsonResult(response);
             }
             catch (Exception ex)
@@ -88,15 +90,15 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.UpdateBakerEndPoint)]
-        public IActionResult Update(UpdateBakerRequest request)
+        [HttpPut("{id}")]
+        public IActionResult UpdateBaker(int id, UpdateBakerRequest request)
         {
             try
             {
                 BakersRepository repo = new BakersRepository();
                 var baker = new Baker()
                 {
-                    Id = request.Id,
+                    Id = id,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     EmailAddress = request.EmailAddress,
@@ -104,9 +106,14 @@ namespace BakeryApi.Controllers
                     IsFullTime = request.IsFullTime,
                     RegisteredOn = request.RegisteredOn
                 };
-                repo.Save(baker);
 
-                return new JsonResult(Ok());
+                if (repo.GetAll(n => n.Id == id).Find(i => i.Id == id) == null)
+                {
+                    return NotFound();
+                }
+
+                repo.Save(baker);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -114,15 +121,19 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.DeleteBakerEndPoint)]
-        public IActionResult Delete(DeleteBakerRequest request)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBaker(int id)
         {
             try
             {
                 BakersRepository repo = new BakersRepository();
 
-                Baker baker = new Baker();
-                baker.Id = request.Id;
+                Baker baker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+
+                if (baker == null)
+                {
+                    return NotFound();
+                }
 
                 repo.Delete(baker);
                 return new JsonResult(Ok());
@@ -133,16 +144,15 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.SearchBakersByFirstNameEndPoint)]
-        public IActionResult Srearch(SearchBakersByFirstNameRequest request)
+        [HttpGet("search/{searchWord}")]
+        public IActionResult SearchBakersByFirstName(string searchWord)
         {
             try
             {
                 BakersRepository repo = new BakersRepository();
-                List<Baker> bakersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(request.FirstName.ToUpper()));
+                List<Baker> bakersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
 
                 var response = bakersSearchResult.Select(baker => GenerateResponse(baker)).ToList();
-
                 return new JsonResult(response);
             }
             catch (Exception ex)
@@ -153,15 +163,17 @@ namespace BakeryApi.Controllers
 
         private BakerResponse GenerateResponse(Baker baker)
         {
-            var response = new BakerResponse();
-            response.Id = baker.Id;
-            response.FirstName = baker.FirstName;
-            response.LastName = baker.LastName;
-            response.EmailAddress = baker.EmailAddress;
-            response.Salary = baker.Salary;
-            response.IsFullTime = baker.IsFullTime;
-            response.RegisteredOn = baker.RegisteredOn;
-            response.TotalOrders = baker.TotalOrders;
+            var response = new BakerResponse
+            {
+                Id = baker.Id,
+                FirstName = baker.FirstName,
+                LastName = baker.LastName,
+                EmailAddress = baker.EmailAddress,
+                Salary = baker.Salary,
+                IsFullTime = baker.IsFullTime,
+                RegisteredOn = baker.RegisteredOn,
+                TotalOrders = baker.TotalOrders
+            };
 
             return response;
         }

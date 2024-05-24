@@ -24,7 +24,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await OrderService.Instance.SendRequest<List<OrderResponse>>(new GetAllOrdersRequest());
+                var response = await OrderService.Instance.PostAsync<List<OrderResponse>>(new GetAllOrdersRequest());
                 if (response == null)
                     return BadRequest("Couldn't load orders. Responce message from the server is null");
 
@@ -51,13 +51,13 @@ namespace MyBakeryFinal.Controllers
         public async Task<IActionResult> Add()
         {
             //Retreive all customers
-            var customersResponse = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
+            var customersResponse = await CustomerService.Instance.PostAsync<List<CustomerResponse>>(new GetAllCustomerRequest());
 
             if (customersResponse == null)
                 return BadRequest("Couldn't load customers. Responce message from the server is null");
 
             //Retreive all Bakers
-            var bakersResponse = await BakerService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
+            var bakersResponse = await BakerService.Instance.PostAsync<List<BakerResponse>>(new GetAllBakerRequest());
 
             if (bakersResponse == null)
                 return BadRequest("Couldn't load bakers. Responce message from the server is null");
@@ -76,7 +76,7 @@ namespace MyBakeryFinal.Controllers
 
             try
             {
-                var response = await OrderService.Instance.SendRequest<OkResult>(new CreateOrderRequest(addVM.Details, addVM.Quantity, addVM.Tip, addVM.Total, addVM.IsExpress, DateTime.Now, addVM.Customer_ID, addVM.Baker_ID));
+                var response = await OrderService.Instance.PostAsync<OkResult>(new CreateOrderRequest(addVM.Details, addVM.Quantity, addVM.Tip, addVM.Total, addVM.IsExpress, DateTime.Now, addVM.Customer_ID, addVM.Baker_ID));
 
                 if (response == null)
                     return BadRequest("Couldn't add order. Responce message from the server is null");
@@ -98,20 +98,20 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            var orderResponse = await OrderService.Instance.SendRequest<OrderResponse>(new GetOrderRequest(id));
+            var orderResponse = await OrderService.Instance.PostAsync<OrderResponse>(new GetOrderRequest(id));
 
             EditVM vm = new EditVM();
             vm.Order = GenerateOrder(orderResponse);
 
 
             //Retreive all customers
-            var customersResponse = await CustomerService.Instance.SendRequest<List<CustomerResponse>>(new GetAllCustomerRequest());
+            var customersResponse = await CustomerService.Instance.PostAsync<List<CustomerResponse>>(new GetAllCustomerRequest());
 
             if (customersResponse == null)
                 return BadRequest("Couldn't load customers which are needed for editing orders. Responce message from the server is null");
 
             //Retreive all Bakers
-            var bakersResponse = await BakerService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
+            var bakersResponse = await BakerService.Instance.PostAsync<List<BakerResponse>>(new GetAllBakerRequest());
 
             if (bakersResponse == null)
                 return BadRequest("Couldn't load bakers which are needed for editing orders. Responce message from the server is null");
@@ -146,7 +146,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await OrderService.Instance.SendRequest<OkResult>(new UpdateOrderRequest(vm.Order.Id, vm.Order.Details, vm.Order.Quantity, vm.Order.Tip, vm.Order.Total, vm.Order.IsExpress, vm.Order.PlacedOn, vm.Order.Customer_ID, vm.Order.Baker_ID));
+                var response = await OrderService.Instance.PostAsync<OkResult>(new UpdateOrderRequest(vm.Order.Id, vm.Order.Details, vm.Order.Quantity, vm.Order.Tip, vm.Order.Total, vm.Order.IsExpress, vm.Order.PlacedOn, vm.Order.Customer_ID, vm.Order.Baker_ID));
 
                 if (response == null)
                     return BadRequest("Couldn't edit Order. Responce message from the server is null");
@@ -170,7 +170,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await OrderService.Instance.SendRequest<OkResult>(new DeleteOrderRequest(id));
+                var response = await OrderService.Instance.PostAsync<OkResult>(new DeleteOrderRequest(id));
 
                 if (response == null)
                     return BadRequest("Couldn't delete order. Responce message from the server is null");
@@ -195,7 +195,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var responseList = await OrderService.Instance.SendRequest<List<OrderResponse>>(new SearchOrdersByDetailsRequest(firstName));
+                var responseList = await OrderService.Instance.PostAsync<List<OrderResponse>>(new SearchOrdersByDetailsRequest(firstName));
 
                 if (responseList == null)
                     return BadRequest("Couldn't search for orders. Responce message from the server is null");

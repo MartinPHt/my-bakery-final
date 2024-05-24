@@ -24,7 +24,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await BakerService.Instance.SendRequest<List<BakerResponse>>(new GetAllBakerRequest());
+                var response = await BakerService.Instance.GetAllAsync<List<BakerResponse>>();
 
                 if (response == null)
                     return BadRequest("Couldn't load bakers. Responce message from the server is null");
@@ -69,7 +69,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await BakerService.Instance.SendRequest<BakerResponse>(new CreateBakerRequest(addVM.FirstName, addVM.LastName, addVM.EmailAddress, addVM.Salary, addVM.IsFullTime, DateTime.Now));
+                var response = await BakerService.Instance.PostAsync<BakerResponse>(new CreateBakerRequest(addVM.FirstName, addVM.LastName, addVM.EmailAddress, addVM.Salary, addVM.IsFullTime, DateTime.Now));
 
                 if (response == null)
                     return BadRequest("Couldn't add baker. Responce message from the server is null");    
@@ -91,7 +91,7 @@ namespace MyBakeryFinal.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await BakerService.Instance.SendRequest<BakerResponse>(new GetBakerRequest(id));
+            var response = await BakerService.Instance.GetAsync<BakerResponse>(id.ToString());
 
             Baker baker = new Baker()
             {
@@ -115,7 +115,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await BakerService.Instance.SendRequest<OkResult>(new UpdateBakerRequest(vm.Baker.Id, vm.Baker.FirstName, vm.Baker.LastName, vm.Baker.EmailAddress, vm.Baker.Salary, vm.Baker.IsFullTime, vm.Baker.RegisteredOn));
+                var response = await BakerService.Instance.PutAsync<OkResult>(new UpdateBakerRequest(vm.Baker.Id, vm.Baker.FirstName, vm.Baker.LastName, vm.Baker.EmailAddress, vm.Baker.Salary, vm.Baker.IsFullTime, vm.Baker.RegisteredOn));
 
                 if (response == null)
                     return BadRequest("Couldn't edit baker. Responce message from the server is null");
@@ -140,7 +140,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await BakerService.Instance.SendRequest<OkResult>(new DeleteBakerRequest(id));
+                var response = await BakerService.Instance.DeleteAsync<OkResult>(id.ToString());
 
                 if (response == null)
                     return BadRequest("Couldn't edit baker. Responce message from the server is null");
@@ -165,7 +165,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var responseList = await BakerService.Instance.SendRequest<List<BakerResponse>>(new SearchBakersByFirstNameRequest(firstName));
+                var responseList = await BakerService.Instance.GetSearchAsync<List<BakerResponse>>(firstName);
 
                 if (responseList == null)
                     return BadRequest("Couldn't add Baker. Responce message from the server is null");
