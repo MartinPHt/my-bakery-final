@@ -120,7 +120,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await CustomerService.Instance.PutAsync<OkResult>(new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.FirstName, vm.Customer.LastName, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
+                var response = await CustomerService.Instance.PutAsync<OkResult>(vm.Customer.Id, new UpdateCustomerRequest(vm.Customer.Id, vm.Customer.FirstName, vm.Customer.LastName, vm.Customer.Address, vm.Customer.AccountBalance, vm.Customer.DeluxeAccount, vm.Customer.RegisteredOn));
 
                 if (response == null)
                     return BadRequest("Couldn't edit customer. Responce message from the server is null");

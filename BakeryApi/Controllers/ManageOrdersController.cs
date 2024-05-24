@@ -9,22 +9,28 @@ namespace BakeryApi.Controllers
     [ApiController]
     public class ManageOrdersController : ControllerBase
     {
+        private readonly OrdersRepository _ordersRepo;
+        private readonly CustomersRepository _customersRepo;
+        private readonly BakersRepository _bakersRepo;
+
         public ManageOrdersController()
         {
-
+            _ordersRepo = new OrdersRepository();
+            _customersRepo = new CustomersRepository();
+            _bakersRepo = new BakersRepository();
         }
 
-        [HttpPost(Endpoints.CreateOrderEndPoint)]
+        // Create
+        [HttpPost]
         public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
         {
             try
             {
-                //Save to database
-                OrdersRepository ordersRepo = new OrdersRepository();
-                Order order = new Order(request.Details, request.Quantity, request.Tip, request.Total, request.IsExpress, request.PlacedOn, request.Customer_ID, request.Baker_ID);
-                ordersRepo.Save(order);
+                var order = new Order(request.Details, request.Quantity, request.Tip, request.Total, request.IsExpress, request.PlacedOn, request.Customer_ID, request.Baker_ID);
+                _ordersRepo.Save(order);
 
-                return new JsonResult(Ok());
+                var response = GenerateResponse(order);
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, response); // Return 201 Created
             }
             catch (Exception ex)
             {
@@ -32,19 +38,20 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetOrderEndPoint)]
-        public IActionResult Get(GetOrderRequest request)
+        // Retrieve by ID
+        [HttpGet("{id}")]
+        public IActionResult GetOrder(int id)
         {
             try
             {
-                //Retrieve from database
-                OrdersRepository repo = new OrdersRepository();
-                Order order = repo.GetAll(n => n.Id == request.Id).Find(i => i.Id == request.Id);
+                var order = _ordersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (order == null)
+                {
+                    return NotFound(); // Return 404 if not found
+                }
 
-                //generate response
-                var response = GenerateResponse(order, new CustomersRepository(), new BakersRepository());
-
-                return new JsonResult(response);
+                var response = GenerateResponse(order);
+                return Ok(response); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -52,16 +59,15 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.GetAllOrdersEndPoint)]
+        // Retrieve all
+        [HttpGet]
         public IActionResult GetAll()
         {
             try
             {
-                OrdersRepository ordersRepo = new OrdersRepository();
-                List<Order> allOrders = ordersRepo.GetAll(i => true);
-                var response = allOrders.Select(order => GenerateResponse(order, new CustomersRepository(), new BakersRepository())).ToList();
-
-                return new JsonResult(response);
+                var allOrders = _ordersRepo.GetAll(i => true);
+                var response = allOrders.Select(order => GenerateResponse(order)).ToList();
+                return Ok(response); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -69,14 +75,28 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.UpdateOrderEndPoint)]
-        public IActionResult Update(UpdateOrderRequest request)
+        // Update
+        [HttpPut("{id}")]
+        public IActionResult UpdateOrder(int id, UpdateOrderRequest request)
         {
             try
             {
-                OrdersRepository repo = new OrdersRepository();
-                repo.Save(GenerateOrder(request));
+                var order = _ordersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (order == null)
+                {
+                    return NotFound();
+                }
 
+                order.Details = request.Details;
+                order.Quantity = request.Quantity;
+                order.Tip = request.Tip;
+                order.Total = request.Total;
+                order.IsExpress = request.IsExpress;
+                order.PlacedOn = request.PlacedOn;
+                order.Customer_ID = request.Customer_ID;
+                order.Baker_ID = request.Baker_ID;
+
+                _ordersRepo.Save(order);
                 return new JsonResult(Ok());
             }
             catch (Exception ex)
@@ -85,18 +105,20 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.DeleteOrderEndPoint)]
-        public IActionResult Delete(DeleteOrderRequest request)
+        // Delete
+        [HttpDelete("{id}")]
+        public IActionResult DeleteOrder(int id)
         {
             try
             {
-                OrdersRepository repo = new OrdersRepository();
+                var order = _ordersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (order == null)
+                {
+                    return NotFound(); // Return 404 if not found
+                }
 
-                Order order = new Order();
-                order.Id = request.Id;
-
-                repo.Delete(order);
-                return new JsonResult(Ok());
+                _ordersRepo.Delete(order);
+                return Ok(); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -104,15 +126,15 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpPost(Endpoints.SearchOrdersByDetailsEndPoint)]
-        public IActionResult Srearch(SearchOrdersByDetailsRequest request)
+        // Search by details
+        [HttpGet("search/{details}")]
+        public IActionResult SearchOrdersByDetails(string details)
         {
             try
             {
-                OrdersRepository repo = new OrdersRepository();
-                List<Order> ordersSearchResult = repo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(request.Details.ToUpper()));
-                var response = ordersSearchResult.Select(order => GenerateResponse(order, new CustomersRepository(), new BakersRepository())).ToList();
-                return new JsonResult(response);
+                var ordersSearchResult = _ordersRepo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(details.ToUpper()));
+                var response = ordersSearchResult.Select(order => GenerateResponse(order)).ToList();
+                return Ok(response); // Return 200 OK
             }
             catch (Exception ex)
             {
@@ -120,37 +142,19 @@ namespace BakeryApi.Controllers
             }
         }
 
-        private OrderResponse GenerateResponse(Order order, CustomersRepository customersRepo, BakersRepository bakersRepo)
+        private OrderResponse GenerateResponse(Order order)
         {
-            var response = new OrderResponse();
-            response.Id = order.Id;
-            response.Details = order.Details;
-            response.Tip = order.Tip;
-            response.Total = order.Total;
-            response.IsExpress = order.IsExpress;
-            response.PlacedOn = order.PlacedOn;
-            response.Quantity = order.Quantity;
-
-            //Foreign Keys
-            response.Customer = customersRepo.GetAll(n => n.Id == order.Customer_ID).Find(i => i.Id == order.Customer_ID);
-            response.Baker = bakersRepo.GetAll(n => n.Id == order.Baker_ID).Find(i => i.Id == order.Baker_ID);
-
-            return response;
-        }
-
-        private Order GenerateOrder(UpdateOrderRequest request)
-        {
-            return new Order()
+            return new OrderResponse
             {
-                Id = request.Id,
-                Details = request.Details,
-                Quantity = request.Quantity,
-                Tip = request.Tip,
-                Total = request.Total,
-                IsExpress = request.IsExpress,
-                PlacedOn = request.PlacedOn,
-                Customer_ID = request.Customer_ID,
-                Baker_ID = request.Baker_ID,
+                Id = order.Id,
+                Details = order.Details,
+                Tip = order.Tip,
+                Total = order.Total,
+                IsExpress = order.IsExpress,
+                PlacedOn = order.PlacedOn,
+                Quantity = order.Quantity,
+                Customer = _customersRepo.GetAll(n => n.Id == order.Customer_ID).Find(i => i.Id == order.Customer_ID),
+                Baker = _bakersRepo.GetAll(n => n.Id == order.Baker_ID).Find(i => i.Id == order.Baker_ID)
             };
         }
     }

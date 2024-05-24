@@ -115,7 +115,7 @@ namespace MyBakeryFinal.Controllers
         {
             try
             {
-                var response = await BakerService.Instance.PutAsync<OkResult>(new UpdateBakerRequest(vm.Baker.Id, vm.Baker.FirstName, vm.Baker.LastName, vm.Baker.EmailAddress, vm.Baker.Salary, vm.Baker.IsFullTime, vm.Baker.RegisteredOn));
+                var response = await BakerService.Instance.PutAsync<OkResult>(vm.Baker.Id, new UpdateBakerRequest(vm.Baker.Id, vm.Baker.FirstName, vm.Baker.LastName, vm.Baker.EmailAddress, vm.Baker.Salary, vm.Baker.IsFullTime, vm.Baker.RegisteredOn));
 
                 if (response == null)
                     return BadRequest("Couldn't edit baker. Responce message from the server is null");

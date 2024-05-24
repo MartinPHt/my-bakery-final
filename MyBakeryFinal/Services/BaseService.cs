@@ -60,7 +60,7 @@ namespace MyBakeryFinal.Services
             return JsonSerializer.Deserialize<T>(responseBody, serializerOptions);
         }
 
-        public virtual async Task<T> PutAsync<T>(IRequest request)
+        public virtual async Task<T> PutAsync<T>(int id, IRequest request)
         {
             StringContent requestContent = null;
 
@@ -70,7 +70,7 @@ namespace MyBakeryFinal.Services
                 requestContent = new StringContent(jsonResult, Encoding.UTF8, "application/json");
             }
 
-            HttpResponseMessage httpResponse = await HttpClient.PutAsync(requestUri, requestContent);
+            HttpResponseMessage httpResponse = await HttpClient.PutAsync($"{requestUri}/{id}", requestContent);
             httpResponse.EnsureSuccessStatusCode();
             string responseBody = await httpResponse.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseBody, serializerOptions);

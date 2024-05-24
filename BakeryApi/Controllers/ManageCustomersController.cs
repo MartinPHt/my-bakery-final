@@ -18,7 +18,6 @@ namespace BakeryApi.Controllers
             _ordersRepo = new OrdersRepository();
         }
 
-        // Create
         [HttpPost]
         public IActionResult CreateCustomer(CreateCustomerRequest request)
         {
@@ -28,7 +27,7 @@ namespace BakeryApi.Controllers
                 _customersRepo.Save(customer);
 
                 var response = GenerateResponse(customer);
-                return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, response); // Return 201 Created
+                return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, response);
             }
             catch (Exception ex)
             {
@@ -36,7 +35,6 @@ namespace BakeryApi.Controllers
             }
         }
 
-        // Retrieve by ID
         [HttpGet("{id}")]
         public IActionResult GetCustomer(int id)
         {
@@ -45,11 +43,11 @@ namespace BakeryApi.Controllers
                 var customer = _customersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (customer == null)
                 {
-                    return NotFound(); // Return 404 if not found
+                    return NotFound();
                 }
 
                 var response = GenerateResponse(customer);
-                return Ok(response); // Return 200 OK
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -57,7 +55,6 @@ namespace BakeryApi.Controllers
             }
         }
 
-        // Retrieve all
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -72,7 +69,7 @@ namespace BakeryApi.Controllers
                 }
 
                 var response = allCustomers.Select(customer => GenerateResponse(customer)).ToList();
-                return Ok(response); // Return 200 OK
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -80,7 +77,6 @@ namespace BakeryApi.Controllers
             }
         }
 
-        // Update
         [HttpPut("{id}")]
         public IActionResult UpdateCustomer(int id, UpdateCustomerRequest request)
         {
@@ -89,7 +85,7 @@ namespace BakeryApi.Controllers
                 var customer = _customersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (customer == null)
                 {
-                    return NotFound(); // Return 404 if not found
+                    return NotFound();
                 }
 
                 customer.FirstName = request.FirstName;
@@ -100,7 +96,7 @@ namespace BakeryApi.Controllers
                 customer.RegisteredOn = request.RegisteredOn;
 
                 _customersRepo.Save(customer);
-                return Ok(); // Return 200 OK
+                return new JsonResult(Ok());
             }
             catch (Exception ex)
             {
@@ -108,7 +104,6 @@ namespace BakeryApi.Controllers
             }
         }
 
-        // Delete
         [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
         {

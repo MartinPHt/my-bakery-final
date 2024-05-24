@@ -96,24 +96,25 @@ namespace BakeryApi.Controllers
             try
             {
                 BakersRepository repo = new BakersRepository();
-                var baker = new Baker()
-                {
-                    Id = id,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    EmailAddress = request.EmailAddress,
-                    Salary = request.Salary,
-                    IsFullTime = request.IsFullTime,
-                    RegisteredOn = request.RegisteredOn
-                };
 
-                if (repo.GetAll(n => n.Id == id).Find(i => i.Id == id) == null)
+                // Find the existing baker object
+                var existingBaker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                if (existingBaker == null)
                 {
                     return NotFound();
                 }
 
-                repo.Save(baker);
-                return Ok();
+                // Update the existing baker object
+                existingBaker.FirstName = request.FirstName;
+                existingBaker.LastName = request.LastName;
+                existingBaker.EmailAddress = request.EmailAddress;
+                existingBaker.Salary = request.Salary;
+                existingBaker.IsFullTime = request.IsFullTime;
+                existingBaker.RegisteredOn = request.RegisteredOn;
+
+                // Save changes to the database
+                repo.Save(existingBaker);
+                return new JsonResult(Ok());
             }
             catch (Exception ex)
             {
