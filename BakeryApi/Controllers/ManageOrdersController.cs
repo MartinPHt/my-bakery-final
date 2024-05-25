@@ -47,11 +47,11 @@ namespace BakeryApi.Controllers
                 var order = _ordersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (order == null)
                 {
-                    return NotFound(); // Return 404 if not found
+                    return NotFound();
                 }
 
                 var response = GenerateResponse(order);
-                return Ok(response); // Return 200 OK
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace BakeryApi.Controllers
             {
                 var allOrders = _ordersRepo.GetAll(i => true);
                 var response = allOrders.Select(order => GenerateResponse(order)).ToList();
-                return Ok(response); // Return 200 OK
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -114,11 +114,11 @@ namespace BakeryApi.Controllers
                 var order = _ordersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (order == null)
                 {
-                    return NotFound(); // Return 404 if not found
+                    return NotFound();
                 }
 
                 _ordersRepo.Delete(order);
-                return Ok(); // Return 200 OK
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace BakeryApi.Controllers
             {
                 var ordersSearchResult = _ordersRepo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(details.ToUpper()));
                 var response = ordersSearchResult.Select(order => GenerateResponse(order)).ToList();
-                return Ok(response); // Return 200 OK
+                return Ok(response);
             }
             catch (Exception ex)
             {
