@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Entities
@@ -19,7 +20,7 @@ namespace Common.Entities
 
         public Order()
         {
-            
+
         }
 
         public string Details { get; set; }
@@ -35,8 +36,10 @@ namespace Common.Entities
         public DateTime PlacedOn { get; set; }
 
         #region Foreign Keys
+        [DisplayName("Customer")]
         public int Customer_ID { get; set; }
 
+        [DisplayName("Baker")]
         public int Baker_ID { get; set; }
 
         [ForeignKey("Customer_ID")]

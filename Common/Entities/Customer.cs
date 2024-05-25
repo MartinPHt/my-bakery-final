@@ -45,5 +45,10 @@ namespace Common.Entities
         public DateTime RegisteredOn { get; set; }
 
         public int TotalOrders { get; set; }
+
+        public string FullName 
+        {
+            get { return $"{FirstName} {LastName}"; }
+        }
     }
 }

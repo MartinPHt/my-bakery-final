@@ -24,7 +24,7 @@ namespace MyBakeryFinal.Services
         {
             StringContent requestContent = null;
 
-            if (request.HasData)
+            if (request.ContainsData)
             {
                 string jsonResult = JsonSerializer.Serialize(request, request.GetType(), serializerOptions);
                 requestContent = new StringContent(jsonResult, Encoding.UTF8, "application/json");
@@ -64,7 +64,7 @@ namespace MyBakeryFinal.Services
         {
             StringContent requestContent = null;
 
-            if (request.HasData)
+            if (request.ContainsData)
             {
                 string jsonResult = JsonSerializer.Serialize(request, request.GetType(), serializerOptions);
                 requestContent = new StringContent(jsonResult, Encoding.UTF8, "application/json");

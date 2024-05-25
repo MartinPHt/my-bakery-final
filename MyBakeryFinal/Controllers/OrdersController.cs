@@ -118,24 +118,6 @@ namespace MyBakeryFinal.Controllers
             vm.Customers = customersResponse.Select(customerResponse => GenerateCustomer(customerResponse)).ToList();
             vm.Bakers = bakersResponse.Select(bakerResponse => GenerateBaker(bakerResponse)).ToList();
 
-            //Generate html raw for select containers for Baker and Customer
-            //with preselected value matching the one in the database
-            var optionsHtml = new StringBuilder();
-            foreach (var baker in vm.Bakers)
-            {
-                var selected = baker.Id == vm.Order.Baker_ID ? "selected=\"selected\"" : "";
-                optionsHtml.Append($"<option {selected} value=\"{baker.Id}\">{baker.FirstName} {baker.LastName}</option>");
-            }
-            ViewBag.BakerOptions = optionsHtml.ToString();
-
-            optionsHtml = new StringBuilder();
-            foreach (var customer in vm.Customers)
-            {
-                var selected = customer.Id == vm.Order.Customer_ID ? "selected=\"selected\"" : "";
-                optionsHtml.Append($"<option {selected} value=\"{customer.Id}\">{customer.FirstName} {customer.LastName}</option>");
-            }
-            ViewBag.CustomerOptions = optionsHtml.ToString();
-
             return View(vm);
         }
 

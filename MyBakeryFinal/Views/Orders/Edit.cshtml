@@ -8,6 +8,8 @@
 <form action="/Orders/Edit" method="post">
     <div>
         <div class="grid">
+            @Html.HiddenFor(m => m.Order.Id)
+            @Html.HiddenFor(m => m.Order.PlacedOn)
             <div class="row mb-2">
                 <div class="col-2">
                     @Html.LabelFor(m => m.Order.Details)
@@ -68,9 +70,7 @@
                     @Html.LabelFor(m => m.Order.Customer_ID)
                 </div>
                 <div class="col-2">
-                    <select id="Customer_ID" name="Customer_ID">
-                        @Html.Raw(ViewBag.CustomerOptions)
-                    </select>
+                    @Html.DropDownListFor(m => m.Order.Customer_ID, new SelectList(Model.Customers, "Id", "FullName", Model.Order.Customer_ID), new { @class = "form-control" })
                 </div>
             </div>
             <div class="row mb-2">
@@ -78,11 +78,10 @@
                     @Html.LabelFor(m => m.Order.Baker_ID)
                 </div>
                 <div class="col-2">
-                    <select id="Baker_ID" name="Baker_ID">
-                        @Html.Raw(ViewBag.BakerOptions)
-                    </select>
+                    @Html.DropDownListFor(m => m.Order.Baker_ID, new SelectList(Model.Bakers, "Id", "FullName", Model.Order.Baker_ID), new { @class = "form-control" })
                 </div>
             </div>
+
             <div class="row mb-2">
                 <div class="row mb-2">
                     <div class="col-3">
