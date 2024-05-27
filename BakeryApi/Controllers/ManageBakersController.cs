@@ -9,19 +9,22 @@ namespace BakeryApi.Controllers
     [ApiController]
     public class ManageBakersController : ControllerBase
     {
+        private readonly BakersRepository _bakersRepo;
+        private readonly OrdersRepository _ordersRepo;
         public ManageBakersController()
         {
+            _bakersRepo = new BakersRepository();
+            _ordersRepo = new OrdersRepository();
         }
 
         [HttpPost]
-        public IActionResult CreateBaker(CreateBakerRequest request)
+        public IActionResult CreateBaker([FromBody] CreateBakerRequest request)
         {
             try
             {
                 // Save to database
-                BakersRepository bakersRepo = new BakersRepository();
                 Baker baker = new Baker(request.FirstName, request.LastName, request.EmailAddress, request.Salary, request.IsFullTime, request.RegisteredOn);
-                bakersRepo.Save(baker);
+                _bakersRepo.Save(baker);
 
                 // Generate response
                 var response = GenerateResponse(baker);
@@ -39,8 +42,7 @@ namespace BakeryApi.Controllers
             try
             {
                 // Retrieve from database
-                BakersRepository repo = new BakersRepository();
-                Baker baker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                Baker baker = _bakersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
 
                 if (baker == null)
                 {
@@ -62,10 +64,8 @@ namespace BakeryApi.Controllers
         {
             try
             {
-                BakersRepository bakersRepo = new BakersRepository();
-                OrdersRepository ordersRepo = new OrdersRepository();
-                List<Baker> allBakers = bakersRepo.GetAll(i => true);
-                List<Order> allOrders = ordersRepo.GetAll(i => true);
+                List<Baker> allBakers = _bakersRepo.GetAll(i => true);
+                List<Order> allOrders = _ordersRepo.GetAll(i => true);
 
                 foreach (var baker in allBakers)
                 {
@@ -91,14 +91,12 @@ namespace BakeryApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateBaker(int id, UpdateBakerRequest request)
+        public IActionResult UpdateBaker(int id, [FromBody] UpdateBakerRequest request)
         {
             try
             {
-                BakersRepository repo = new BakersRepository();
-
                 // Find the existing baker object
-                var existingBaker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
+                var existingBaker = _bakersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (existingBaker == null)
                 {
                     return NotFound();
@@ -113,7 +111,7 @@ namespace BakeryApi.Controllers
                 existingBaker.RegisteredOn = request.RegisteredOn;
 
                 // Save changes to the database
-                repo.Save(existingBaker);
+                _bakersRepo.Save(existingBaker);
                 return new JsonResult(Ok());
             }
             catch (Exception ex)
@@ -127,16 +125,11 @@ namespace BakeryApi.Controllers
         {
             try
             {
-                BakersRepository repo = new BakersRepository();
-
-                Baker baker = repo.GetAll(n => n.Id == id).Find(i => i.Id == id);
-
+                Baker baker = _bakersRepo.GetAll(n => n.Id == id).Find(i => i.Id == id);
                 if (baker == null)
-                {
                     return NotFound();
-                }
 
-                repo.Delete(baker);
+                _bakersRepo.Delete(baker);
                 return new JsonResult(Ok());
             }
             catch (Exception ex)
@@ -150,8 +143,7 @@ namespace BakeryApi.Controllers
         {
             try
             {
-                BakersRepository repo = new BakersRepository();
-                List<Baker> bakersSearchResult = repo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                List<Baker> bakersSearchResult = _bakersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
 
                 var response = bakersSearchResult.Select(baker => GenerateResponse(baker)).ToList();
                 return new JsonResult(response);

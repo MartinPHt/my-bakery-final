@@ -19,7 +19,7 @@ namespace BakeryApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCustomer(CreateCustomerRequest request)
+        public IActionResult CreateCustomer([FromBody] CreateCustomerRequest request)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace BakeryApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCustomer(int id, UpdateCustomerRequest request)
+        public IActionResult UpdateCustomer(int id, [FromBody] UpdateCustomerRequest request)
         {
             try
             {

@@ -22,7 +22,7 @@ namespace BakeryApi.Controllers
 
         // Create
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace BakeryApi.Controllers
 
         // Update
         [HttpPut("{id}")]
-        public IActionResult UpdateOrder(int id, UpdateOrderRequest request)
+        public IActionResult UpdateOrder(int id, [FromBody] UpdateOrderRequest request)
         {
             try
             {
