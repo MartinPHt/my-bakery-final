@@ -172,16 +172,17 @@ namespace MyBakeryFinal.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Search(string firstName)
+        public async Task<IActionResult> Search(string filter, string searchWord)
         {
             try
             {
-                var responseList = await OrderService.Instance.GetSearchAsync<List<OrderResponse>>(firstName);
+                var responseList = await OrderService.Instance.GetSearchAsync<List<OrderResponse>>(filter, searchWord);
 
                 if (responseList == null)
                     return BadRequest("Couldn't search for orders. Responce message from the server is null");
 
                 SearchVM vm = new SearchVM();
+                vm.Filter = filter;
                 var ordersList = responseList.Select(response => GenerateOrder(response)).ToList();
 
                 vm.Orders = ordersList;

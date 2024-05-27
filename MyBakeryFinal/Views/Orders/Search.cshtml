@@ -5,19 +5,22 @@
     }
 
         .search-container input[type="text"],
+        .search-container select,
         .search-container button {
             vertical-align: middle;
-        }
-
-        .search-container input[type="text"] {
             height: 34px;
         }
 
         .search-container button {
-            height: 34px;
             margin-left: 5px;
-            margin-right: 5px;
         }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
+        vertical-align: middle;
+        margin-inline-end: 4px;
+    }
 </style>
 
 @model MyBakeryFinal.ViewModels.Orders.SearchVM
@@ -28,7 +31,8 @@
 
 <div class="search-container">
     <form id="searchForm" action="/Orders/Search" method="post" onsubmit="return validateSearchForm()">
-        <input type="text" id="firstName" placeholder="Search.." name="firstName">
+        @Html.DropDownListFor(m => m.Filter, new SelectList(Model.AllProperties, Model.Filter), new { @class = "form-control" })
+        <input type="text" id="searchWord" placeholder="Search.." name="searchWord">
         <button type="submit" class="btn btn-success p-3 py-1">Search</button>
         <a href="/Orders/Index" class="btn btn-danger p-3 py-1">Reset</a>
     </form>

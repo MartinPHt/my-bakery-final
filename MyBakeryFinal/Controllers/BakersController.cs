@@ -161,11 +161,11 @@ namespace MyBakeryFinal.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Search(string firstName)
+        public async Task<IActionResult> Search(string filter, string searchWord)
         {
             try
             {
-                var responseList = await BakerService.Instance.GetSearchAsync<List<BakerResponse>>(firstName);
+                var responseList = await BakerService.Instance.GetSearchAsync<List<BakerResponse>>(filter, searchWord);
 
                 if (responseList == null)
                     return BadRequest("Couldn't add Baker. Responce message from the server is null");

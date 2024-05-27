@@ -165,11 +165,11 @@ namespace MyBakeryFinal.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Search(string firstName)
+        public async Task<IActionResult> Search(string filter, string searchWord)
         {
             try
             {
-                var responseList = await CustomerService.Instance.GetSearchAsync<List<CustomerResponse>>(firstName);
+                var responseList = await CustomerService.Instance.GetSearchAsync<List<CustomerResponse>>(filter, searchWord);
 
                 if (responseList == null)
                     return BadRequest("Couldn't search for customers. Responce message from the server is null");

@@ -20,7 +20,6 @@ namespace BakeryApi.Controllers
             _bakersRepo = new BakersRepository();
         }
 
-        // Create
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
         {
@@ -30,7 +29,7 @@ namespace BakeryApi.Controllers
                 _ordersRepo.Save(order);
 
                 var response = GenerateResponse(order);
-                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, response); // Return 201 Created
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, response);
             }
             catch (Exception ex)
             {
@@ -126,13 +125,21 @@ namespace BakeryApi.Controllers
             }
         }
 
-        // Search by details
-        [HttpGet("search/{details}")]
-        public IActionResult SearchOrdersByDetails(string details)
+        [HttpGet("search/{filter}/{searchWord}")]
+        public IActionResult SearchOrdersByDetails(string filter, string searchWord)
         {
             try
             {
-                var ordersSearchResult = _ordersRepo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(details.ToUpper()));
+                List<Order> ordersSearchResult;
+                if (filter == "Customer")
+                    ordersSearchResult = _ordersRepo.GetAll(n => n.Customer.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()) || n.Customer.LastName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+
+                else if (filter == "Baker")
+                    ordersSearchResult = _ordersRepo.GetAll(n => n.Baker.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()) || n.Baker.LastName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+
+                else
+                    ordersSearchResult = _ordersRepo.GetAll(n => n.Details.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+
                 var response = ordersSearchResult.Select(order => GenerateResponse(order)).ToList();
                 return Ok(response);
             }

@@ -36,9 +36,9 @@ namespace MyBakeryFinal.Services
             return JsonSerializer.Deserialize<T>(responseBody, serializerOptions);
         }
 
-        public virtual async Task<T> GetSearchAsync<T>(string searchWord)
+        public virtual async Task<T> GetSearchAsync<T>(string filter, string searchWord)
         {
-            HttpResponseMessage httpResponse = await HttpClient.GetAsync($"{requestUri}/search/{searchWord}");
+            HttpResponseMessage httpResponse = await HttpClient.GetAsync($"{requestUri}/search/{filter}/{searchWord}");
             httpResponse.EnsureSuccessStatusCode();
             string responseBody = await httpResponse.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseBody, serializerOptions);

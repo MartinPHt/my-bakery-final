@@ -124,8 +124,8 @@ namespace BakeryApi.Controllers
             }
         }
 
-        [HttpGet("search/{searchWord}")]
-        public IActionResult SearchCustomersByFirstName(string searchWord)
+        [HttpGet("search/{filter}/{searchWord}")]
+        public IActionResult SearchCustomersByFirstName(string filter, string searchWord)
         {
             try
             {
