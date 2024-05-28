@@ -129,9 +129,15 @@ namespace BakeryApi.Controllers
         {
             try
             {
-                var customersSearchResult = _customersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
-                var response = customersSearchResult.Select(customer => GenerateResponse(customer)).ToList();
+                List<Customer> customersSearchResult;
+                if (filter == "Address")
+                    customersSearchResult = _customersRepo.GetAll(n => n.Address.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                else if (filter == "Last Name")
+                    customersSearchResult = _customersRepo.GetAll(n => n.LastName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                else //First Name
+                    customersSearchResult = _customersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
 
+                var response = customersSearchResult.Select(customer => GenerateResponse(customer)).ToList();
                 return Ok(response);
             }
             catch (Exception ex)

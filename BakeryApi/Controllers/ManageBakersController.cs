@@ -143,7 +143,14 @@ namespace BakeryApi.Controllers
         {
             try
             {
-                List<Baker> bakersSearchResult = _bakersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                List<Baker> bakersSearchResult;
+
+                if (filter == "E-mail")
+                    bakersSearchResult = _bakersRepo.GetAll(n => n.EmailAddress.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                else if (filter == "Last Name")
+                    bakersSearchResult = _bakersRepo.GetAll(n => n.LastName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
+                else //Firs tName
+                    bakersSearchResult = _bakersRepo.GetAll(n => n.FirstName.ToUpper().Replace(" ", "").Contains(searchWord.ToUpper()));
 
                 var response = bakersSearchResult.Select(baker => GenerateResponse(baker)).ToList();
                 return new JsonResult(response);

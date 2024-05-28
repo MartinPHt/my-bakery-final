@@ -4,18 +4,23 @@
         margin-top: 15px;
     }
 
-    .search-container input[type="text"],
-    .search-container button {
+        .search-container input[type="text"],
+        .search-container select,
+        .search-container label,
+        .search-container button {
+            vertical-align: middle;
+            height: 34px;
+        }
+
+        .search-container button {
+            margin-left: 5px;
+        }
+
+    .form-control {
+        display: inline-block;
+        width: auto;
         vertical-align: middle;
-    }
-
-    .search-container input[type="text"] {
-        height: 34px;
-    }
-
-    .search-container button {
-        height: 34px;
-        margin-left: 5px;
+        margin-inline-end: 4px;
     }
 </style>
 
@@ -23,11 +28,13 @@
 @{
 }
 
-<h4>Search by first name</h4>
+<h4>Search</h4>
 
 <div class="search-container">
     <form id="searchForm" action="/Customers/Search" method="post" onsubmit="return validateSearchForm()">
-        <input type="text" id="firstName" placeholder="Search.." name="firstName">
+        <label for="Filter">Filter:</label>
+        @Html.DropDownListFor(m => m.Filter, new SelectList(Model.AllProperties, Model.Filter), new { @class = "form-control" })
+        <input type="text" id="searchWord" placeholder="Search.." name="searchWord">
         <button type="submit" class="btn btn-success p-3 py-1">Search</button>
     </form>
 </div>
